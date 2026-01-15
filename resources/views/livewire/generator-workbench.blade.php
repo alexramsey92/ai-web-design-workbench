@@ -1,5 +1,52 @@
-<div class="min-h-screen bg-gray-50">
-    <div class="h-screen flex flex-col">
+<div class="fixed inset-0 bg-gray-50 overflow-hidden"
+     x-data="{
+        hasDraft: false,
+        draftHtml: '',
+        init() {
+            // Load draft from localStorage on mount
+            const draft = localStorage.getItem('html-draft');
+            if (draft && draft.trim().length > 0) {
+                this.hasDraft = true;
+                this.draftHtml = draft;
+                setTimeout(() => {
+                    $wire.loadDraft(draft);
+                }, 100);
+            }
+        }
+     }"
+     x-on:clear-draft.window="localStorage.removeItem('html-draft'); hasDraft = false; draftHtml = ''"
+     x-on:input.window="hasDraft = (localStorage.getItem('html-draft') || '').trim().length > 0">
+    <div class="h-full flex flex-col">
+        <!-- Draft Banner -->
+        <div x-show="hasDraft" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2"
+             class="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-200 px-6 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-green-900">
+                            <span class="font-semibold">Draft Saved</span> — Your work is automatically saved
+                        </p>
+                    </div>
+                </div>
+                <button 
+                    @click="$wire.clear(); hasDraft = false"
+                    class="text-xs text-green-700 hover:text-green-900 font-medium px-3 py-1.5 rounded-lg hover:bg-green-100 transition">
+                    <i class="fas fa-times mr-1.5"></i>Dismiss
+                </button>
+            </div>
+        </div>
+        
         <!-- Main Content -->
         <div class="flex-1 flex overflow-hidden">
             <!-- Left Panel - Controls & Editor -->
@@ -75,29 +122,22 @@
                     </div>
 
                     <div x-data="{ 
-                        generating: @entangle('isGenerating'),
                         elapsedTime: 0,
                         estimatedTime: 45,
-                        interval: null,
-                        startTimer() {
-                            this.elapsedTime = 0;
-                            this.interval = setInterval(() => {
-                                if (this.generating) {
-                                    this.elapsedTime++;
-                                } else {
-                                    this.stopTimer();
-                                }
-                            }, 1000);
-                        },
-                        stopTimer() {
-                            if (this.interval) {
-                                clearInterval(this.interval);
-                                this.interval = null;
-                            }
-                            this.elapsedTime = 0;
-                        }
+                        interval: null
                     }"
-                    x-init="$watch('generating', value => { if (value) startTimer(); else stopTimer(); })"
+                    @generate-started.window="
+                        elapsedTime = 0;
+                        if (interval) clearInterval(interval);
+                        interval = setInterval(() => { elapsedTime++; }, 1000);
+                    "
+                    @generate-finished.window="
+                        if (interval) {
+                            clearInterval(interval);
+                            interval = null;
+                        }
+                        elapsedTime = 0;
+                    "
                     class="space-y-2">
                         <button 
                             wire:click="generate" 
@@ -133,45 +173,37 @@
 
                 <!-- Code Editor -->
                 <div class="flex-1 bg-gray-50 overflow-hidden flex flex-col">
-                    @if($generatedHtml)
-                        <div class="p-6 pb-3">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center gap-4">
-                                    <h3 class="text-sm font-semibold text-gray-700">Generated HTML</h3>
+                    <div class="p-6 pb-3">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-4">
+                                <h3 class="text-sm font-semibold text-gray-700">Generated HTML</h3>
+                                @if($generatedHtml)
                                     <span class="text-xs text-gray-500">{{ strlen($generatedHtml) }} characters</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <button 
-                                        wire:click="clear" 
-                                        class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                                        <i class="fas fa-trash-alt mr-1.5"></i>Clear
-                                    </button>
-                                    <button 
-                                        onclick="copyToClipboard()" 
-                                        class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
-                                        <i class="fas fa-copy mr-1.5"></i>Copy
-                                    </button>
-                                </div>
+                                @endif
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button 
+                                    wire:click="clear" 
+                                    class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                                    <i class="fas fa-trash-alt mr-1.5"></i>Clear
+                                </button>
+                                <button 
+                                    onclick="copyToClipboard()" 
+                                    class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
+                                    <i class="fas fa-copy mr-1.5"></i>Copy
+                                </button>
                             </div>
                         </div>
-                        <div class="flex-1 px-6 pb-6 overflow-hidden">
-                            <textarea 
-                                wire:model.live="generatedHtml"
-                                class="w-full h-full bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm border-0 focus:ring-2 focus:ring-blue-500 resize-none"
-                                style="font-family: 'Fira Code', 'Courier New', monospace; line-height: 1.6; tab-size: 2;"
-                                spellcheck="false"
-                            ></textarea>
-                        </div>
-                    @else
-                        <div class="flex items-center justify-center h-full text-gray-400">
-                            <div class="text-center">
-                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                                </svg>
-                                <p class="text-sm">Enter a prompt and click Generate to see code here</p>
-                            </div>
-                        </div>
-                    @endif
+                    </div>
+                    <div class="flex-1 px-6 pb-6 overflow-hidden">
+                        <textarea 
+                            wire:model.live="generatedHtml"
+                            x-on:input="localStorage.setItem('html-draft', $event.target.value)"
+                            class="w-full h-full bg-gray-900 text-gray-300 p-4 rounded-lg font-mono text-sm border-0 focus:ring-2 focus:ring-blue-500 resize-none"
+                            style="font-family: 'Fira Code', 'Courier New', monospace; line-height: 1.6; tab-size: 2;"
+                            spellcheck="false"
+                        ></textarea>
+                    </div>
                 </div>
             </div>
 
@@ -181,26 +213,26 @@
                     <h3 class="text-sm font-semibold text-gray-700">Live Preview</h3>
                 </div>
                 <div class="flex-1 overflow-auto p-4">
-                    @if($generatedHtml)
-                        <div class="bg-white rounded-lg shadow-sm h-full overflow-auto">
+                    <div class="bg-white rounded-lg shadow-sm h-full overflow-auto">
+                        @if($generatedHtml)
                             <iframe 
                                 src="{{ $this->getPreviewUrl() }}"
                                 class="w-full h-full border-0"
                                 sandbox="allow-same-origin allow-scripts allow-forms"
                                 title="HTML Preview"
                             ></iframe>
-                        </div>
-                    @else
-                        <div class="flex items-center justify-center h-full">
-                            <div class="text-center text-gray-400">
-                                <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                                <p class="text-sm">Preview will appear here</p>
+                        @else
+                            <div class="flex items-center justify-center h-full">
+                                <div class="text-center text-gray-400">
+                                    <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    <p class="text-sm">Preview will appear here</p>
+                                </div>
                             </div>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
