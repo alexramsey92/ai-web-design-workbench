@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Web Design Workbench - Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .gradient-bg {
+            background: linear-gradient(-45deg, #667eea 0%, #764ba2 25%, #f093fb 51%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Hero Section -->
+    <div class="gradient-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="text-center text-white">
+                <h1 class="text-5xl font-bold mb-4">AI Web Design Workbench</h1>
+                <p class="text-xl mb-8 text-white/90">
+                    A universal workbench for rapidly generating production-ready HTML using AI, Tailwind CSS, and semantic design patterns.
+                </p>
+                <div class="flex items-center justify-center gap-4">
+                    <a href="https://github.com/alexramsey92/ai-web-design-workbench" 
+                       class="px-6 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-gray-100 transition inline-flex items-center gap-2">
+                        <i class="fab fa-github"></i>
+                        View on GitHub
+                    </a>
+                    <a href="https://github.com/alexramsey92/ai-web-design-workbench#quick-start" 
+                       class="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition inline-flex items-center gap-2">
+                        <i class="fas fa-rocket"></i>
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Three Ways to Work</h2>
+            <p class="text-xl text-gray-600">Choose the workflow that fits your style</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- IDE Workflow -->
+            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition">
+                <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                    <i class="fas fa-code text-3xl text-blue-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">🎨 IDE Workflow</h3>
+                <p class="text-gray-600 mb-6">Work directly in your favorite IDE with AI coding assistants for maximum power and control.</p>
+                <ul class="space-y-3 text-gray-600">
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>Full AI assistance</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>Complex customizations</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>Iterative design</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Browser Workbench -->
+            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition border-2 border-purple-500">
+                <div class="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
+                    <i class="fas fa-window-maximize text-3xl text-purple-600"></i>
+                </div>
+                <div class="inline-block px-3 py-1 bg-purple-100 text-purple-600 rounded-full text-sm font-semibold mb-4">
+                    Most Popular
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">🌐 Browser Workbench</h3>
+                <p class="text-gray-600 mb-6">Split-screen code editor with live preview, accessible through your browser.</p>
+                <ul class="space-y-3 text-gray-600">
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>Visual feedback</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>Quick prototyping</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>No setup required</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- CLI Commands -->
+            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition">
+                <div class="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-6">
+                    <i class="fas fa-terminal text-3xl text-green-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">⌨️ CLI Commands</h3>
+                <p class="text-gray-600 mb-6">Generate HTML directly from your terminal for automation and scripting.</p>
+                <ul class="space-y-3 text-gray-600">
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>Batch generation</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>CI/CD integration</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-green-500 mt-1"></i>
+                        <span>Scriptable</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Video Section -->
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">See It In Action</h2>
+                <p class="text-xl text-gray-300">Watch how easy it is to generate beautiful landing pages</p>
+            </div>
+            <div class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden">
+                <video src="images/ai-landing-page-generator-demo.mp4" controls class="w-full">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Features</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-palette text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Three Styling Levels</h3>
+                    <p class="text-gray-600">Choose between full, mid, or low styling density</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-list-check text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Curated Tailwind Whitelist</h3>
+                    <p class="text-gray-600">Only production-ready, tested classes</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-robot text-green-600 text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">AI-Powered Generation</h3>
+                    <p class="text-gray-600">Connect your Claude API for intelligent HTML generation</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-code text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Template Fallback</h3>
+                    <p class="text-gray-600">Works perfectly without AI using built-in templates</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-terminal text-red-600 text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">CLI-First</h3>
+                    <p class="text-gray-600">Generate HTML directly from your terminal/IDE</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-universal-access text-indigo-600 text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Semantic & Accessible</h3>
+                    <p class="text-gray-600">Follows HTML best practices and accessibility guidelines</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="bg-gray-100 py-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Quick Start</h2>
+                <p class="text-xl text-gray-600">Get up and running in minutes</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-8 space-y-6">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">
+                        1
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Install Laravel Herd (Recommended)</h3>
+                        <p class="text-gray-600 mb-3">The fastest way to get started with PHP, Composer, and Node.js included.</p>
+                        <a href="https://herd.laravel.com" target="_blank" class="text-purple-600 hover:text-purple-700 font-medium inline-flex items-center gap-2">
+                            Download Laravel Herd <i class="fas fa-external-link-alt text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">
+                        2
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Clone the Repository</h3>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                            git clone https://github.com/alexramsey92/ai-web-design-workbench.git
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">
+                        3
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Install Dependencies</h3>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                            composer install && npm install && npm run build
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">
+                        4
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Configure Environment</h3>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                            cp .env.example .env && php artisan key:generate
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Launch Workbench</h3>
+                        <p class="text-gray-600 mb-3">Navigate to:</p>
+                        <div class="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm">
+                            http://ai-web-design-workbench.test/workbench
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <a href="https://github.com/alexramsey92/ai-web-design-workbench#quick-start" 
+                   class="text-purple-600 hover:text-purple-700 font-semibold inline-flex items-center gap-2">
+                    View Full Documentation <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documentation Links -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Documentation</h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <a href="MCP_SETUP.md" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition block">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-plug text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">MCP Setup Guide</h3>
+                </div>
+                <p class="text-gray-600">Learn how to integrate with Model Context Protocol servers for enhanced AI capabilities.</p>
+            </a>
+
+            <a href="SEMANTIC_CLASSES.md" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition block">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-book text-purple-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">Semantic Classes</h3>
+                </div>
+                <p class="text-gray-600">Reference guide for semantic CSS classes and their usage patterns.</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h4 class="text-lg font-bold mb-4">AI Web Design Workbench</h4>
+                    <p class="text-gray-400">Rapidly generate production-ready HTML using AI and Tailwind CSS.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="https://github.com/alexramsey92/ai-web-design-workbench" class="hover:text-white">GitHub Repository</a></li>
+                        <li><a href="https://github.com/alexramsey92/ai-web-design-workbench#quick-start" class="hover:text-white">Documentation</a></li>
+                        <li><a href="https://github.com/alexramsey92/ai-web-design-workbench/issues" class="hover:text-white">Issues</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Powered By</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="https://laravel.com" class="hover:text-white">Laravel</a></li>
+                        <li><a href="https://tailwindcss.com" class="hover:text-white">Tailwind CSS</a></li>
+                        <li><a href="https://www.anthropic.com" class="hover:text-white">Anthropic Claude</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Connect</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="https://alexanderramsey.com" class="hover:text-white">Alexander Ramsey</a></li>
+                        <li><a href="https://github.com/alexramsey92" class="hover:text-white">GitHub Profile</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>Built with ❤️ by <a href="https://alexanderramsey.com" class="text-purple-400 hover:text-purple-300">Alexander Ramsey</a></p>
+                <p class="mt-2">MIT License © 2026</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
