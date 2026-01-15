@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Log;
 class GeneratorWorkbench extends Component
 {
     public string $prompt = '';
-    public string $styleLevel = 'full';
+    public string $styleLevel = 'low';
     public string $pageType = 'landing';
-    public int $maxTokens = 4096;
+    public int $maxTokens = 1024;
     public string $generatedHtml = '';
     public bool $isGenerating = false;
     public ?string $error = null;
