@@ -178,6 +178,37 @@ export default (function () {
         }
     });
 
+    // Listen for draft restore events (from Livewire loadDraft)
+    document.addEventListener('workbench-draft-restored', (e) => {
+        try {
+            const payload = e && (e.detail || e);
+            const html = (payload && payload.html) ? payload.html : (typeof payload === 'string' ? payload : '');
+            console.log('workbench: draft restored event, length=', (html || '').length);
+            if (editor && editor.getValue && editor.setValue) {
+                isUpdatingFromWire = true;
+                editor.setValue(html);
+                editor.focus();
+                // select all
+                try {
+                    const model = editor.getModel();
+                    if (model) {
+                        const lastLine = model.getLineCount();
+                        const lastCol = model.getLineMaxColumn(lastLine);
+                        const sel = new monaco.Selection(1, 1, lastLine, lastCol);
+                        editor.setSelection(sel);
+                        editor.revealRangeInCenter(sel);
+                    }
+                } catch (err) { console.warn('Failed selecting restored content in Monaco', err); }
+                setTimeout(() => { isUpdatingFromWire = false; }, 50);
+            } else {
+                try { initMonaco(html); } catch (err) { console.warn('Failed to initMonaco from draft-restored', err); }
+            }
+            updateDraft(html);
+        } catch (err) {
+            console.warn('Failed handling workbench-draft-restored', err);
+        }
+    });
+
     function updateDraft(value) {
         if (value && value.trim().length > 0) {
             localStorage.setItem('html-draft', value);

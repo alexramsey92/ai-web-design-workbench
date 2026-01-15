@@ -109,6 +109,9 @@ class GeneratorWorkbench extends Component
         $this->generatedHtml = $html;
         $this->showPreview = true;
         $this->hasDraft = true;
+
+        // Notify the browser so the client can update the editor immediately
+        $this->dispatchBrowserEvent('workbench-draft-restored', ['html' => $html]);
     }
 
     public function clearDraft(): void
