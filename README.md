@@ -1,5 +1,7 @@
 # AI Web Design Workbench
 
+[View the demo on GitHub Pages](https://alexramsey92.github.io/ai-web-design-workbench/)
+
 > **A universal workbench for rapidly generating production-ready HTML using AI, Tailwind CSS, and semantic design patterns.**
 
 https://github.com/user-attachments/assets/2c8c30a7-f250-43bf-b2bd-d30f196fd4dc
