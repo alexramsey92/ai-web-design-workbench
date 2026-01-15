@@ -61,7 +61,7 @@ class AnthropicClient
                     ])
                     ->post('https://api.anthropic.com/v1/messages', [
                         'model' => config('mcp.anthropic.model'),
-                        'max_tokens' => (int) config('mcp.anthropic.max_tokens', 4096),
+                        'max_tokens' => (int) ($context['max_tokens'] ?? config('mcp.anthropic.max_tokens', 4096)),
                         'temperature' => (float) config('mcp.anthropic.temperature', 0.7),
                         'system' => $systemPrompt,
                         'messages' => [
