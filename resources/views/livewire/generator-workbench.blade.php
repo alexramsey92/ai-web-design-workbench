@@ -162,8 +162,8 @@
                                     <i class="fas fa-trash-alt mr-1.5"></i>Clear
                                 </button>
                                 <button 
-                                    onclick="copyToClipboard()" 
-                                    class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
+                                    onclick="copyToClipboard(this)" 
+                                    class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition" aria-live="polite">
                                     <i class="fas fa-copy mr-1.5"></i>Copy
                                 </button>
                             </div>

@@ -241,20 +241,91 @@ export default (function () {
         container.appendChild(ta);
     }
 
-    function copyToClipboard() {
-        const code = editor ? (typeof editor.getValue === 'function' ? editor.getValue() : '') : (document.querySelector('#monaco-editor textarea') ? document.querySelector('#monaco-editor textarea').value : '');
-        navigator.clipboard.writeText(code).then(() => {
-            const button = (document.activeElement && document.activeElement.tagName === 'BUTTON') ? document.activeElement : null;
+    function copyToClipboard(button) {
+        // Resolve content from Monaco editor or fallback textarea
+        let code = '';
+        if (editor && editor.getValue && typeof editor.getValue === 'function') {
+            try { code = editor.getValue(); } catch (e) { code = ''; }
+        } else {
+            const ta = document.querySelector('#monaco-editor textarea');
+            if (ta) code = ta.value || '';
+        }
+
+        if (!button) {
+            // fail-safe: try to find the copy button
+            button = document.querySelector('button[onclick^="copyToClipboard("]');
+        }
+
+        // Do nothing if no content to copy
+        if (!code || code.length === 0) {
             if (button) {
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
-                button.classList.add('bg-green-600');
-                button.classList.remove('bg-blue-600');
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.classList.remove('bg-green-600');
-                    button.classList.add('bg-blue-600');
-                }, 2000);
+                const prev = button.innerHTML;
+                button.innerHTML = 'Nothing to copy';
+                button.disabled = true;
+                setTimeout(() => { button.disabled = false; button.innerHTML = prev; }, 1500);
+            }
+            return;
+        }
+
+        // Disable the button to prevent repeated clicks until the content changes
+        if (button) {
+            button.disabled = true;
+            button.classList.add('opacity-50', 'cursor-not-allowed');
+            var originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied to clipboard';
+        }
+
+        navigator.clipboard.writeText(code).then(() => {
+            // Highlight/select the copied content
+            try {
+                if (editor && editor.getModel && editor.getModel()) {
+                    const model = editor.getModel();
+                    const lastLine = model.getLineCount();
+                    const lastCol = model.getLineMaxColumn(lastLine);
+                    // Use Monaco Selection API
+                    const sel = new monaco.Selection(1, 1, lastLine, lastCol);
+                    editor.setSelection(sel);
+                    editor.revealRangeInCenter(sel);
+                    editor.focus();
+                    // Re-enable when user changes content (or after timeout)
+                    const d = editor.onDidChangeModelContent(() => {
+                        try { d.dispose(); } catch (e) {}
+                        if (button) {
+                            button.disabled = false;
+                            button.classList.remove('opacity-50', 'cursor-not-allowed');
+                            button.innerHTML = originalHTML;
+                        }
+                    });
+                    // Fallback timeout to re-enable
+                    setTimeout(() => { try { d.dispose(); } catch (e) {}; if (button) { button.disabled = false; button.classList.remove('opacity-50','cursor-not-allowed'); button.innerHTML = originalHTML; } }, 5000);
+                } else {
+                    // Fallback textarea selection
+                    const ta = document.querySelector('#monaco-editor textarea');
+                    if (ta) {
+                        try { ta.focus(); ta.select(); } catch (e) {}
+                        const handler = () => {
+                            try { ta.removeEventListener('input', handler); } catch (e) {}
+                            if (button) {
+                                button.disabled = false;
+                                button.classList.remove('opacity-50', 'cursor-not-allowed');
+                                button.innerHTML = originalHTML;
+                            }
+                        };
+                        ta.addEventListener('input', handler, { once: true });
+                        setTimeout(() => { try { ta.removeEventListener('input', handler); } catch (e) {}; if (button) { button.disabled = false; button.classList.remove('opacity-50','cursor-not-allowed'); button.innerHTML = originalHTML; } }, 5000);
+                    } else {
+                        // Generic fallback: re-enable after short delay
+                        setTimeout(() => { if (button) { button.disabled = false; button.classList.remove('opacity-50','cursor-not-allowed'); button.innerHTML = originalHTML; } }, 2000);
+                    }
+                }
+            } catch (e) { console.warn('copyToClipboard selection error', e); if (button) { button.disabled = false; button.classList.remove('opacity-50','cursor-not-allowed'); button.innerHTML = originalHTML; } }
+        }).catch((err) => {
+            console.warn('Failed to copy to clipboard', err);
+            if (button) {
+                button.disabled = false;
+                button.classList.remove('opacity-50','cursor-not-allowed');
+                button.innerHTML = originalHTML || 'Copy';
+                alert('Copy failed: please use your browser or select the code manually.');
             }
         });
     }
