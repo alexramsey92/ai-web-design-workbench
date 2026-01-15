@@ -33,31 +33,39 @@ class MCPStatusCommand extends Command
      */
     public function handle(): int
     {
-        $this->info('MCP Server Status Check');
+        $this->info('AI Content Generation Status Check');
         $this->line('');
 
-        // Check if MCP is enabled
+        // Check if AI is enabled
         if (!config('mcp.enabled')) {
-            $this->warn('⚠ MCP is DISABLED');
+            $this->warn('⚠ AI Content Generation is DISABLED');
             $this->line('');
-            $this->line('To enable MCP:');
-            $this->line('1. Set MCP_ENABLED=true in your .env file');
-            $this->line('2. Configure MCP_SERVER_URL (default: http://localhost:3000)');
-            $this->line('3. Optionally set MCP_API_KEY if your server requires authentication');
+            $this->line('To enable AI generation:');
+            $this->line('1. Set AI_CONTENT_GENERATION_ENABLED=true in your .env file');
+            $this->line('2. Set ANTHROPIC_API_KEY with your Claude API key');
+            $this->line('3. Configure model and generation settings as needed');
             $this->line('');
-            $this->info('When MCP is disabled, template-based generation will be used as fallback.');
+            $this->info('When AI is disabled, template-based generation will be used as fallback.');
             return 0;
         }
 
-        $this->info('✓ MCP is ENABLED');
+        $this->info('✓ AI Content Generation is ENABLED');
         $this->line('');
 
         // Display configuration
         $this->line('Configuration:');
-        $this->line('  Server URL: ' . config('mcp.server_url'));
-        $this->line('  API Key: ' . (config('mcp.api_key') ? '(configured)' : '(not set)'));
+        $this->line('  Provider: ' . config('mcp.provider'));
+        $this->line('  Model: ' . config('mcp.anthropic.model'));
+        $this->line('  API Key: ' . (config('mcp.anthropic.api_key') ? '(configured)' : '(not set)'));
+        $this->line('  Max Tokens: ' . config('mcp.anthropic.max_tokens'));
+        $this->line('  Temperature: ' . config('mcp.anthropic.temperature'));
         $this->line('  Timeout: ' . config('mcp.timeout') . 's');
-        $this->line('  Max Retries: ' . config('mcp.max_retries'));
+        $this->line('  Rate Limiting: ' . (config('mcp.rate_limiting.enabled') ? 'Enabled' : 'Disabled'));
+        if (config('mcp.rate_limiting.enabled')) {
+            $this->line('    Max Requests/Hour: ' . config('mcp.rate_limiting.max_requests_per_hour'));
+            $this->line('    Max Requests/Day: ' . config('mcp.rate_limiting.max_requests_per_day'));
+        }
+        $this->line('  Logging: ' . (config('mcp.logging_enabled') ? 'Enabled' : 'Disabled'));
         $this->line('');
 
         // Test connection

@@ -3,21 +3,34 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | MCP (Model Context Protocol) Configuration
+    | AI Content Generation Configuration
     |--------------------------------------------------------------------------
     |
-    | Configure MCP server connection for AI-powered HTML generation.
-    | Set MCP_ENABLED=true in .env to enable MCP features.
+    | Configure AI provider for AI-powered HTML generation.
+    | Set AI_CONTENT_GENERATION_ENABLED=true in .env to enable AI features.
     |
     */
 
-    'enabled' => env('MCP_ENABLED', false),
+    'enabled' => env('AI_CONTENT_GENERATION_ENABLED', false),
     
-    'server_url' => env('MCP_SERVER_URL', 'http://localhost:3000'),
+    'provider' => env('AI_PROVIDER', 'anthropic'),
     
-    'api_key' => env('MCP_API_KEY', ''),
+    'anthropic' => [
+        'api_key' => env('ANTHROPIC_API_KEY', ''),
+        'model' => env('ANTHROPIC_MODEL', 'claude-sonnet-4-20250514'),
+        'max_tokens' => env('ANTHROPIC_MAX_TOKENS', 4096),
+        'temperature' => env('ANTHROPIC_TEMPERATURE', 0.7),
+    ],
     
-    'timeout' => env('MCP_TIMEOUT', 30),
+    'timeout' => env('AI_TIMEOUT', 30),
+    
+    'rate_limiting' => [
+        'enabled' => env('AI_RATE_LIMIT_ENABLED', true),
+        'max_requests_per_hour' => env('AI_MAX_REQUESTS_PER_HOUR', 60),
+        'max_requests_per_day' => env('AI_MAX_REQUESTS_PER_DAY', 200),
+    ],
+    
+    'logging_enabled' => env('AI_LOGGING_ENABLED', true),
     
     /*
     |--------------------------------------------------------------------------

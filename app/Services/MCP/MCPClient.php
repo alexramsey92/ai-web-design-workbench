@@ -16,8 +16,8 @@ class MCPClient
 
     public function __construct()
     {
-        $this->serverUrl = config('mcp.server_url');
-        $this->apiKey = config('mcp.api_key');
+        $this->serverUrl = config('mcp.anthropic.api_url', 'https://api.anthropic.com/v1');
+        $this->apiKey = config('mcp.anthropic.api_key');
         $this->timeout = config('mcp.timeout');
         $this->maxRetries = config('mcp.max_retries');
         $this->retryDelay = config('mcp.retry_delay');

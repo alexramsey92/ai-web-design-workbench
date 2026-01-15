@@ -4,6 +4,8 @@
 
 Generate beautiful landing pages, blog posts, and product pages in minutes, not hours. Built for developers who want the power of AI with the precision of curated design systems.
 
+If you bought an entire design system for $70k 2 years ago, congratulations it is now worth $0.
+
 ## ✨ Features
 
 - 🎨 **Three Styling Levels**: Choose between full, mid, or low styling density
@@ -21,13 +23,28 @@ Generate beautiful landing pages, blog posts, and product pages in minutes, not 
 - PHP 8.2 or higher
 - Composer
 - Node.js & npm (for Tailwind CSS)
-- (Optional) Laravel Boost MCP server for AI generation
+- **Recommended:** [Laravel Herd](https://herd.laravel.com) (free, batteries-included PHP development environment)
+- (Optional) Anthropic API key for AI-powered generation
 
-### Installation
+### Recommended Setup with Laravel Herd
+
+**Laravel Herd** is the fastest way to get started. It includes PHP, Composer, Node.js, and automatically serves your Laravel apps.
+
+#### Windows Users
+1. Download and install [Laravel Herd for Windows](https://herd.laravel.com)
+2. Herd will automatically detect and serve this project
+3. Access via: `http://ai-web-design-workbench.test`
+
+#### Mac Users
+1. Download and install [Laravel Herd for Mac](https://herd.laravel.com)
+2. Herd will automatically detect and serve this project
+3. Access via: `http://ai-web-design-workbench.test`
+
+### Manual Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/ai-web-design-workbench.git
+   git clone https://github.com/alexramsey92/ai-web-design-workbench.git
    cd ai-web-design-workbench
    ```
 
@@ -38,8 +55,16 @@ Generate beautiful landing pages, blog posts, and product pages in minutes, not 
    ```
 
 3. **Configure environment**
+   
+   **Windows:**
    ```bash
    copy .env.example .env
+   php artisan key:generate
+   ```
+   
+   **Mac/Linux:**
+   ```bash
+   cp .env.example .env
    php artisan key:generate
    ```
 
@@ -48,16 +73,39 @@ Generate beautiful landing pages, blog posts, and product pages in minutes, not 
    npm run build
    ```
 
+5. **(Optional) Enable AI Generation**
+   
+   Edit `.env` and add your Anthropic API key:
+   ```env
+   AI_CONTENT_GENERATION_ENABLED=true
+   ANTHROPIC_API_KEY=your-api-key-here
+   ```
+
 ### Basic Usage
 
 Generate a landing page with full styling:
 
+**Mac/Linux:**
 ```bash
 php artisan html:generate landing-page \
   --company="ClientBridge" \
   --headline="Build Amazing Web Experiences" \
   --style=full \
   --output=output/landing-page.html
+```
+
+**Windows (PowerShell):**
+```powershell
+php artisan html:generate landing-page `
+  --company="ClientBridge" `
+  --headline="Build Amazing Web Experiences" `
+  --style=full `
+  --output=output/landing-page.html
+```
+
+**Windows (CMD):**
+```cmd
+php artisan html:generate landing-page --company="ClientBridge" --headline="Build Amazing Web Experiences" --style=full --output=output/landing-page.html
 ```
 
 ## 📖 Usage Guide
