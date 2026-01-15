@@ -1,26 +1,5 @@
 <div class="min-h-screen bg-gray-50">
     <div class="h-screen flex flex-col">
-        <!-- Header -->
-        <div class="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold text-gray-900">HTML Generator Workbench</h1>
-                <div class="flex items-center gap-3">
-                    @if($generatedHtml)
-                        <button 
-                            wire:click="clear" 
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                            Clear
-                        </button>
-                        <button 
-                            onclick="copyToClipboard()" 
-                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
-                            <i class="fas fa-copy mr-2"></i>Copy Code
-                        </button>
-                    @endif
-                </div>
-            </div>
-        </div>
-
         <!-- Main Content -->
         <div class="flex-1 flex overflow-hidden">
             <!-- Left Panel - Controls & Editor -->
@@ -157,8 +136,22 @@
                     @if($generatedHtml)
                         <div class="p-6 pb-3">
                             <div class="flex items-center justify-between mb-3">
-                                <h3 class="text-sm font-semibold text-gray-700">Generated HTML</h3>
-                                <span class="text-xs text-gray-500">{{ strlen($generatedHtml) }} characters</span>
+                                <div class="flex items-center gap-4">
+                                    <h3 class="text-sm font-semibold text-gray-700">Generated HTML</h3>
+                                    <span class="text-xs text-gray-500">{{ strlen($generatedHtml) }} characters</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button 
+                                        wire:click="clear" 
+                                        class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                                        <i class="fas fa-trash-alt mr-1.5"></i>Clear
+                                    </button>
+                                    <button 
+                                        onclick="copyToClipboard()" 
+                                        class="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
+                                        <i class="fas fa-copy mr-1.5"></i>Copy
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="flex-1 px-6 pb-6 overflow-hidden">
