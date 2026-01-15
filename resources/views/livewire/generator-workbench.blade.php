@@ -1,30 +1,20 @@
-<div class="fixed inset-0 bg-gray-50 overflow-hidden">
+<div class="fixed inset-0 bg-gray-50 overflow-hidden" data-workbench data-placeholders='@json($examplePrompts)' data-generated='@json($generatedHtml)' data-wire-id='{{ $__env->getLastLoop()?->parent ?? null }}'>
     <div class="h-full flex flex-col">
-        <!-- Draft Banner -->
-        <div id="draft-banner" 
-             style="display: none;"
-             class="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-200 px-6 py-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="flex-shrink-0">
-                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium text-green-900">
-                            <span class="font-semibold">Draft Saved</span> — Your work is automatically saved
-                        </p>
-                    </div>
-                </div>
-                <button 
-                    onclick="clearDraft()"
-                    class="text-xs text-green-700 hover:text-green-900 font-medium px-3 py-1.5 rounded-lg hover:bg-green-100 transition">
-                    <i class="fas fa-times mr-1.5"></i>Dismiss
-                </button>
+        <!-- Slim header -->
+        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-white/80 text-xs">
+            <div class="flex items-center gap-2">
+                <span class="font-semibold text-sm">AI Web Design Workbench</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="https://github.com/alexramsey92/ai-web-design-workbench" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs text-gray-600 hover:text-gray-800" title="View on GitHub">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.757-1.333-1.757-1.089-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.605-2.665-.305-5.466-1.332-5.466-5.931 0-1.31.468-2.381 1.235-3.221-.123-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.98-.399 3-.405 1.02.006 2.043.139 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.655 1.653.243 2.874.12 3.176.77.84 1.23 1.911 1.23 3.221 0 4.61-2.807 5.624-5.48 5.921.43.369.823 1.096.823 2.214 0 1.598-.015 2.887-.015 3.281 0 .319.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                    </svg>
+                    <span class="sr-only">GitHub</span>
+                </a>
+                <button wire:click="clear" class="text-xs text-gray-600 hover:text-gray-800">Clear</button>
             </div>
         </div>
-        
         <!-- Main Content -->
         <div class="flex-1 flex overflow-hidden">
             <!-- Left Panel - Controls & Editor -->
@@ -130,7 +120,7 @@
                             <span wire:loading.remove wire:target="generate">Generate HTML</span>
                             <span wire:loading wire:target="generate" class="inline-flex items-center gap-2">
                                 <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                                <span class="rainbow-text" x-text="'Generating... ' + elapsedTime + 's'">Generating...</span>
+                                <span class="rainbow-text">Generating...</span>
                             </span>
                             
                             <!-- Progress bar -->
@@ -142,8 +132,7 @@
                         
                         <!-- Estimated time remaining -->
                         <div wire:loading wire:target="generate" class="text-center">
-                            <p class="text-xs text-gray-500" x-show="elapsedTime < estimatedTime" x-text="'Estimated time remaining: ~' + (estimatedTime - elapsedTime) + 's'"></p>
-                            <p class="text-xs text-gray-500" x-show="elapsedTime >= estimatedTime">Almost there...</p>
+                            <p class="text-xs text-gray-500">Generating...</p>
                         </div>
                     </div>
 
@@ -163,6 +152,8 @@
                                 @if($generatedHtml)
                                     <span class="text-xs text-gray-500">{{ strlen($generatedHtml) }} characters</span>
                                 @endif
+
+
                             </div>
                             <div class="flex items-center gap-2">
                                 <button 
@@ -178,8 +169,23 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex-1 px-6 pb-6 overflow-hidden">
-                        <div id="monaco-editor" class="w-full h-full rounded-lg overflow-hidden border-0"></div>
+                    <div class="flex-1 px-6 pb-6 overflow-hidden relative">
+
+                        <!-- Small floating draft icon (appears when a saved draft exists) -->
+                        <div id="draft-overlay" class="absolute top-3 right-3 z-20 hidden items-center gap-2">
+                            <button id="draft-overlay-restore" type="button" onclick="restoreDraft()"
+                                class="inline-flex items-center gap-2 px-2 py-1 text-xs rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 hover:bg-emerald-100 transition"
+                                title="Draft saved — click to restore">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path d="M4 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V7.414A2 2 0 0016.586 6L13 2.414A2 2 0 0011.586 2H4zM9 7a1 1 0 110 2H7a1 1 0 110-2h2z" />
+                                </svg>
+                                <span class="sr-only">Restore draft</span>
+                            </button>
+                            <button id="draft-overlay-dismiss" type="button" onclick="clearDraft()"
+                                class="text-xs text-emerald-700 hover:text-emerald-900" title="Dismiss draft">&times;</button>
+                        </div>
+
+                        <div id="monaco-editor" wire:ignore class="w-full h-full rounded-lg overflow-hidden border-0"></div>
                     </div>
                 </div>
             </div>
@@ -213,243 +219,5 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<script>
-    let editor = null;
-    let isUpdatingFromWire = false;
-    let isUpdatingFromEditor = false;
-
-    // Placeholder manager (Livewire-aware)
-    const placeholders = @js($examplePrompts);
-    const placeholderManager = (function() {
-        let idx = 0;
-        let timer = null;
-        const el = () => document.getElementById('prompt');
-
-        function tick() {
-            const input = el();
-            if (!input) return;
-            if (input.value.trim() === '') {
-                input.placeholder = placeholders[idx % placeholders.length];
-                idx++;
-            }
-        }
-
-        function start() {
-            stop();
-            tick();
-            timer = setInterval(tick, 3000);
-        }
-
-        function stop() {
-            if (timer) {
-                clearInterval(timer);
-                timer = null;
-            }
-        }
-
-        function restartIfEmpty() {
-            const input = el();
-            if (!input) return;
-            if (input.value.trim() === '') start();
-            else stop();
-        }
-
-        return { start, stop, restartIfEmpty };
-    })();
-
-    // Wire up input listener and Livewire hooks
-    function attachPromptListeners() {
-        const promptInput = document.getElementById('prompt');
-        if (!promptInput) return;
-
-        // Stop cycling while user types
-        promptInput.removeEventListener('__placeholder_input', promptInput.__placeholder_handler);
-        promptInput.__placeholder_handler = function() {
-            if (this.value.trim() === '') {
-                placeholderManager.start();
-            } else {
-                placeholderManager.stop();
-            }
-        };
-        promptInput.addEventListener('input', promptInput.__placeholder_handler, { passive: true });
-
-        // Ensure correct state after Livewire updates
-        if (window.Livewire && Livewire.hook) {
-            if (!window.__prompt_livewire_hook_registered) {
-                window.__prompt_livewire_hook_registered = true;
-
-                // After messages are processed, re-attach handlers in case Livewire replaced the element
-                Livewire.hook('message.processed', () => {
-                    setTimeout(() => {
-                        attachPromptListeners();
-                        placeholderManager.restartIfEmpty();
-                    }, 0);
-                });
-
-                // Prevent accidental toJSON method calls from reaching the server
-                Livewire.hook('message.sending', (message) => {
-                    try {
-                        if (message && message.components) {
-                            message.components.forEach((c) => {
-                                if (c.calls && Array.isArray(c.calls)) {
-                                    c.calls = c.calls.filter(call => call.method !== 'toJSON');
-                                }
-                            });
-                        }
-                    } catch (e) {
-                        console.warn('Failed to sanitize Livewire message', e);
-                    }
-                });
-            }
-        }
-
-        // Start cycling on attach
-        placeholderManager.restartIfEmpty();
-    }
-
-    // Attach on load and after Livewire navigation
-    document.addEventListener('DOMContentLoaded', attachPromptListeners);
-    document.addEventListener('livewire:load', attachPromptListeners);
-    document.addEventListener('livewire:navigated', attachPromptListeners);
-
-    // Draft management
-    function checkDraft() {
-        const draft = localStorage.getItem('html-draft');
-        const banner = document.getElementById('draft-banner');
-        if (draft && draft.trim().length > 0 && banner) {
-            banner.style.display = 'block';
-            Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).call('loadDraft', draft);
-        }
-    }
-
-    function clearDraft() {
-        localStorage.removeItem('html-draft');
-        const banner = document.getElementById('draft-banner');
-        if (banner) banner.style.display = 'none';
-        Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).call('clear');
-    }
-
-    function updateDraft(value) {
-        if (value && value.trim().length > 0) {
-            localStorage.setItem('html-draft', value);
-            const banner = document.getElementById('draft-banner');
-            if (banner) banner.style.display = 'block';
-        }
-    }
-
-    // Monaco Editor
-    function initMonaco() {
-            // Load Monaco loader dynamically if needed to avoid AMD 'anonymous define' conflicts
-        function loadMonacoLoader(cb) {
-            if (window.require && window.require.config) {
-                return cb();
-            }
-
-            if (document.getElementById('monaco-loader')) {
-                // already loading; poll until ready
-                const poll = setInterval(() => {
-                    if (window.require && window.require.config) {
-                        clearInterval(poll);
-                        cb();
-                    }
-                }, 50);
-                return;
-            }
-
-            const s = document.createElement('script');
-            s.id = 'monaco-loader';
-            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
-            s.crossOrigin = 'anonymous';
-            s.onload = () => cb();
-            s.onerror = () => console.warn('Failed to load Monaco loader');
-            document.head.appendChild(s);
-        }
-
-        loadMonacoLoader(() => {
-            require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
-            require(['vs/editor/editor.main'], function() {
-                editor = monaco.editor.create(document.getElementById('monaco-editor'), {
-                    value: @js($generatedHtml),
-                    language: 'html',
-                    theme: 'vs-dark',
-                    automaticLayout: true,
-                    fontSize: 14,
-                    lineNumbers: 'on',
-                    minimap: { enabled: true },
-                    scrollBeyondLastLine: false,
-                    wordWrap: 'on',
-                    tabSize: 2,
-                    formatOnPaste: true,
-                    formatOnType: true,
-                });
-
-            // Listen for content changes in Monaco
-            editor.onDidChangeModelContent(() => {
-                if (!isUpdatingFromWire) {
-                    isUpdatingFromEditor = true;
-                    const value = editor.getValue();
-                    if (componentId) {
-                        Livewire.find(componentId).set('generatedHtml', value);
-                    }
-                    updateDraft(value);
-                    setTimeout(() => { isUpdatingFromEditor = false; }, 50);
-                }
-            });
-
-            // Listen for Livewire updates
-            Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
-                succeed(({ snapshot, effect }) => {
-                    if (!isUpdatingFromEditor && component.id === componentId) {
-                        const newValue = component.canonical.data.generatedHtml || '';
-                        if (editor && editor.getValue() !== newValue) {
-                            isUpdatingFromWire = true;
-                            editor.setValue(newValue);
-                            setTimeout(() => { isUpdatingFromWire = false; }, 50);
-                        }
-                    }
-                });
-            });
-        });
-    }
-
-    function copyToClipboard() {
-        const code = editor ? editor.getValue() : @js($generatedHtml);
-        navigator.clipboard.writeText(code).then(() => {
-            const button = event.target.closest('button');
-            const originalText = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
-            button.classList.add('bg-green-600');
-            button.classList.remove('bg-blue-600');
-            setTimeout(() => {
-                button.innerHTML = originalText;
-                button.classList.remove('bg-green-600');
-                button.classList.add('bg-blue-600');
-            }, 2000);
-        });
-    }
-
-    // Initialize everything when page loads
-    function initializeWorkbench() {
-        // Monaco, draft, and prompt handlers
-        if (typeof initMonaco === 'function') initMonaco();
-        if (typeof checkDraft === 'function') checkDraft();
-        attachPromptListeners();
-    }
-
-    document.addEventListener('livewire:navigated', () => {
-        initializeWorkbench();
-    });
-
-    // Run on initial load
-    if (document.readyState !== 'loading') {
-        setTimeout(initializeWorkbench, 100);
-    } else {
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(initializeWorkbench, 100);
-        });
-    }
-</script>
-
+        <!-- Workbench logic moved to bundled JS (resources/js/workbench.js) -->
