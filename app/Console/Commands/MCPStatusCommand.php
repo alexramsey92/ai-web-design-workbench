@@ -10,12 +10,12 @@ class MCPStatusCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'mcp:status';
+    protected $signature = 'ai:status';
 
     /**
      * The console command description.
      */
-    protected $description = 'Check MCP server status and configuration';
+    protected $description = 'Check AI content generation status and Anthropic API connection';
 
     protected MCPClient $mcpClient;
 
@@ -69,21 +69,24 @@ class MCPStatusCommand extends Command
         $this->line('');
 
         // Test connection
-        $this->line('Testing connection...');
+        $this->line('Testing Anthropic API connection...');
         
         try {
             $isHealthy = $this->mcpClient->healthCheck();
             
             if ($isHealthy) {
-                $this->info('✓ MCP server is responding');
+                $this->info('✓ Anthropic API is responding');
+                $this->line('');
+                $this->info('Your AI generation is ready to use!');
                 return 0;
             } else {
-                $this->error('✗ MCP server is not responding');
+                $this->error('✗ Anthropic API is not responding');
                 $this->line('');
                 $this->line('Troubleshooting:');
-                $this->line('1. Ensure your MCP server is running');
-                $this->line('2. Verify the server URL is correct');
-                $this->line('3. Check that the server is accessible from this machine');
+                $this->line('1. Verify your ANTHROPIC_API_KEY is correct in .env');
+                $this->line('2. Check you have API credits available at console.anthropic.com');
+                $this->line('3. Ensure your internet connection is working');
+                $this->line('4. Check Anthropic API status at status.anthropic.com');
                 return 1;
             }
         } catch (\Exception $e) {

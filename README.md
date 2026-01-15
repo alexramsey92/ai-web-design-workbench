@@ -75,13 +75,40 @@ Bring your own AI-IDE, pull this repo down, let the guardrails and the opinion d
    npm run build
    ```
 
-5. **(Optional) Enable AI Generation**
+5. **(Optional) Enable AI Generation with Anthropic Claude**
    
-   Edit `.env` and add your Anthropic API key:
-   ```env
-   AI_CONTENT_GENERATION_ENABLED=true
-   ANTHROPIC_API_KEY=your-api-key-here
-   ```
+   a. **Get your Anthropic API key:**
+      - Visit https://console.anthropic.com/
+      - Sign up or log in to your account
+      - Navigate to API Keys section
+      - Create a new API key
+   
+   b. **Configure your environment:**
+      
+      Edit `.env` and add your API key:
+      ```env
+      AI_CONTENT_GENERATION_ENABLED=true
+      ANTHROPIC_API_KEY=sk-ant-api03-xxxxx  # Your actual API key
+      ```
+   
+   c. **Verify the connection works:**
+      
+      ```bash
+      php artisan ai:status
+      ```
+      
+      **Expected Output:**
+      ```
+      ✓ AI Content Generation is ENABLED
+      ✓ Anthropic API is responding
+      ```
+      
+      If you see "✗ Anthropic API is not responding":
+      - Verify your API key is correct
+      - Check you have API credits/quota available
+      - Ensure your internet connection is working
+   
+   **Without AI:** The workbench works perfectly using built-in semantic templates. AI is completely optional!
 
 ### Basic Usage
 
@@ -186,13 +213,18 @@ php artisan html:generate landing-page \
 
 ## 🤖 MCP Integration (Optional)
 
-The workbench can integrate with Laravel Boost MCP for AI-powered generation. This is completely optional—the tool works great with built-in templates.
+The workbench can integrate with Laravel Boost MCP for AI-powered generation. This is completely optional—the tool works great with built-in templates. Install after Herd is installed on your machine to also install Herd MCP alongside Boost MCP.
 
 ### Setting Up MCP
 
 1. **Install Laravel Boost MCP Server**
    
-   Follow the setup instructions for [Laravel Boost MCP](https://github.com/laravel-boost/mcp) or your preferred MCP server.
+   Follow the setup instructions for [Laravel Boost MCP](https://github.com/laravel/boost) or your preferred MCP server.
+
+   Laravel Boost can be installed via Composer: `composer require laravel/boost -w --dev`
+    Next, install the MCP server and coding guidelines: `php artisan boost:install`
+
+    You will be asked a few questions, I prefer vscode and copilot but you are welcome to use whatever works for you.
 
 2. **Configure Environment**
    
@@ -201,7 +233,6 @@ The workbench can integrate with Laravel Boost MCP for AI-powered generation. Th
    ```env
    MCP_ENABLED=true
    MCP_SERVER_URL=http://localhost:3000
-   MCP_API_KEY=your-api-key-here  # Optional
    ```
 
 3. **Test Connection**

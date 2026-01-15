@@ -129,18 +129,30 @@ class MCPClient
     }
 
     /**
-     * Health check for MCP server
+     * Health check for Anthropic API
      */
     public function healthCheck(): bool
     {
         try {
-            $response = Http::timeout(5)
-                ->withHeaders($this->getHeaders())
-                ->get($this->serverUrl . '/health');
+            // Test Anthropic API with a minimal request
+            $response = Http::timeout(10)
+                ->withHeaders([
+                    'x-api-key' => $this->apiKey,
+                    'anthropic-version' => '2023-06-01',
+                    'Content-Type' => 'application/json',
+                ])
+                ->post('https://api.anthropic.com/v1/messages', [
+                    'model' => config('mcp.anthropic.model'),
+                    'max_tokens' => 10,
+                    'messages' => [[
+                        'role' => 'user',
+                        'content' => 'Hi',
+                    ]],
+                ]);
 
             return $response->successful();
         } catch (\Exception $e) {
-            Log::error('MCP health check failed', ['error' => $e->getMessage()]);
+            Log::error('Anthropic API health check failed', ['error' => $e->getMessage()]);
             return false;
         }
     }
