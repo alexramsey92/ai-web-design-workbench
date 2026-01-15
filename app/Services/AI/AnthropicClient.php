@@ -2,16 +2,20 @@
 
 namespace App\Services\AI;
 
+use App\Exceptions\MCPException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use App\Exceptions\MCPException;
 
 class AnthropicClient
 {
     protected string $serverUrl;
+
     protected ?string $apiKey;
+
     protected int $timeout;
+
     protected int $maxRetries;
+
     protected int $retryDelay;
 
     public function __construct()
@@ -28,7 +32,7 @@ class AnthropicClient
      */
     public function isEnabled(): bool
     {
-        return config('mcp.enabled', false) && !empty($this->serverUrl);
+        return config('mcp.enabled', false) && ! empty($this->serverUrl);
     }
 
     /**
@@ -36,7 +40,7 @@ class AnthropicClient
      */
     public function generate(string $prompt, array $context = []): string
     {
-        if (!$this->isEnabled()) {
+        if (! $this->isEnabled()) {
             throw new MCPException('MCP is not enabled or configured. Check your .env settings.');
         }
 
@@ -46,23 +50,23 @@ class AnthropicClient
         while ($attempt < $this->maxRetries) {
             try {
                 $whitelistedClasses = $this->getWhitelistedClasses($context['style_level'] ?? 'full');
-                
+
                 // Build comprehensive system prompt based on guide
                 $systemPrompt = $this->buildSystemPrompt($whitelistedClasses, $context);
-                
+
                 // Build user prompt with the actual request
                 $userPrompt = $this->buildUserPrompt($prompt);
 
                 $payload = [
                     'model' => config('mcp.anthropic.model'),
-                    'max_tokens' => (int) ($context['max_tokens'] ?? config('mcp.anthropic.max_tokens', 4096)),
+                    'max_tokens' => (int) ($context['max_tokens'] ?? ($context['options']['max_tokens'] ?? config('mcp.anthropic.max_tokens', 4096))),
                     'temperature' => (float) config('mcp.anthropic.temperature', 0.7),
                     'system' => $systemPrompt,
                     'messages' => [
                         [
                             'role' => 'user',
                             'content' => $userPrompt,
-                        ]
+                        ],
                     ],
                 ];
 
@@ -95,7 +99,7 @@ class AnthropicClient
                     'status' => $response->status(),
                     'body' => $response->body(),
                     'json' => $response->successful() ? $response->json() : null,
-                    'duration_ms' => (int)($duration * 1000),
+                    'duration_ms' => (int) ($duration * 1000),
                 ];
 
                 if ($response->successful()) {
@@ -108,7 +112,7 @@ class AnthropicClient
             } catch (\Exception $e) {
                 $lastException = $e;
                 $attempt++;
-                
+
                 Log::warning("MCP generation attempt {$attempt} failed", [
                     'error' => $e->getMessage(),
                     'prompt' => $prompt,
@@ -129,7 +133,7 @@ class AnthropicClient
         ];
 
         throw new MCPException(
-            "MCP generation failed after {$this->maxRetries} attempts: " . 
+            "MCP generation failed after {$this->maxRetries} attempts: ".
             ($lastException ? $lastException->getMessage() : 'Unknown error')
         );
     }
@@ -140,24 +144,24 @@ class AnthropicClient
     protected function buildSystemPrompt(array $whitelistedClasses, array $context): string
     {
         $semanticClasses = ['hero', 'section', 'feature-grid', 'feature-card', 'cta-button', 'btn-primary', 'btn-secondary', 'prose', 'card'];
-        
+
         $prompt = "You are an expert web designer creating beautiful, modern landing pages.\n\n";
         $prompt .= "RULES:\n";
         $prompt .= "- Output clean, semantic HTML only\n";
         $prompt .= "- Mix Tailwind utilities with semantic classes\n";
-        $prompt .= "- Use these semantic CSS classes: " . implode(', ', $semanticClasses) . "\n";
-        $prompt .= "- Available Tailwind classes: " . implode(', ', array_slice($whitelistedClasses, 0, 100)) . " (and more)\n";
+        $prompt .= '- Use these semantic CSS classes: '.implode(', ', $semanticClasses)."\n";
+        $prompt .= '- Available Tailwind classes: '.implode(', ', array_slice($whitelistedClasses, 0, 100))." (and more)\n";
         $prompt .= "- Do NOT include <!DOCTYPE>, <html>, <head>, or <body> tags - only the content\n";
         $prompt .= "- No inline JavaScript or CSS\n";
         $prompt .= "- Use semantic HTML5 tags (section, article, header, nav, etc.)\n";
         $prompt .= "- Include Font Awesome icons where appropriate (use <i class=\"fas fa-icon-name\"></i>)\n\n";
-        
+
         $prompt .= "STRUCTURE:\n";
         $prompt .= "1. Hero section with compelling headline, subheading, and CTA button\n";
         $prompt .= "2. Feature grid showcasing 3-4 key benefits with icons\n";
         $prompt .= "3. Optional secondary content section\n";
         $prompt .= "4. Final CTA section\n\n";
-        
+
         $prompt .= "EXAMPLE STRUCTURE:\n";
         $prompt .= "<section class=\"hero\">\n";
         $prompt .= "    <h1 class=\"text-5xl font-bold mb-4\">Your Headline</h1>\n";
@@ -174,7 +178,7 @@ class AnthropicClient
         $prompt .= "        </div>\n";
         $prompt .= "    </div>\n";
         $prompt .= "</section>\n";
-        
+
         return $prompt;
     }
 
@@ -183,11 +187,11 @@ class AnthropicClient
      */
     protected function buildUserPrompt(string $userRequest): string
     {
-        return "Create a complete, professional landing page for: {$userRequest}\n\n" .
-               "Make it visually appealing, modern, and conversion-focused. " .
-               "Use appropriate colors, spacing, and typography. " .
-               "Include relevant icons and imagery suggestions. " .
-               "Remember: output ONLY the HTML content (no DOCTYPE, html, head, or body tags).";
+        return "Create a complete, professional landing page for: {$userRequest}\n\n".
+               'Make it visually appealing, modern, and conversion-focused. '.
+               'Use appropriate colors, spacing, and typography. '.
+               'Include relevant icons and imagery suggestions. '.
+               'Remember: output ONLY the HTML content (no DOCTYPE, html, head, or body tags).';
     }
 
     /**
@@ -201,7 +205,7 @@ class AnthropicClient
         ];
 
         if ($this->apiKey) {
-            $headers['Authorization'] = 'Bearer ' . $this->apiKey;
+            $headers['Authorization'] = 'Bearer '.$this->apiKey;
         }
 
         return $headers;
@@ -229,21 +233,21 @@ class AnthropicClient
      */
     protected function parseAnthropicResponse(array $response): string
     {
-        if (!isset($response['content'][0]['text'])) {
+        if (! isset($response['content'][0]['text'])) {
             throw new MCPException('Invalid Anthropic response: missing content');
         }
 
         $text = $response['content'][0]['text'];
-        
+
         // Extract HTML if wrapped in code blocks
         if (preg_match('/```html\s*(.*?)\s*```/s', $text, $matches)) {
             return trim($matches[1]);
         }
-        
+
         if (preg_match('/```\s*(.*?)\s*```/s', $text, $matches)) {
             return trim($matches[1]);
         }
-        
+
         return trim($text);
     }
 
@@ -252,7 +256,7 @@ class AnthropicClient
      */
     protected function parseResponse(array $response): string
     {
-        if (!isset($response['html'])) {
+        if (! isset($response['html'])) {
             throw new MCPException('Invalid MCP response: missing html field');
         }
 
@@ -263,6 +267,7 @@ class AnthropicClient
      * Health check for Anthropic API
      */
     protected ?array $lastRequest = null;
+
     protected ?array $lastResponse = null;
 
     public function healthCheck(): bool
@@ -287,14 +292,13 @@ class AnthropicClient
             return $response->successful();
         } catch (\Exception $e) {
             Log::error('Anthropic API health check failed', ['error' => $e->getMessage()]);
+
             return false;
         }
     }
 
     /**
      * Get information about the last Anthropic request/response
-     *
-     * @return array|null
      */
     public function getLastCallInfo(): ?array
     {

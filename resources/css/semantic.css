@@ -64,7 +64,7 @@
   }
 
   .btn-outline {
-    @apply px-8 py-4 text-lg font-semibold rounded-lg bg-transparent text-white border-2 border-white hover:bg-white hover:text-primary-600 transition-all duration-200;
+    @apply px-8 py-4 text-lg font-semibold rounded-lg bg-transparent border-2 text-current border-current hover:bg-current hover:text-white transition-all duration-200;
   }
 
   .btn-secondary {

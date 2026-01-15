@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 class HTMLGenerator
 {
     protected AnthropicClient $anthropicClient;
+
     protected array $styleLevel = ['full', 'mid', 'low'];
 
     public function __construct(AnthropicClient $anthropicClient)
@@ -22,14 +23,14 @@ class HTMLGenerator
     public function generate(string $type, array $options = []): string
     {
         $this->validateOptions($type, $options);
-        
+
         $styleLevel = $options['style_level'] ?? config('mcp.default_style_level', 'full');
-        
+
         // If AI is enabled, use Anthropic generation
         if ($this->anthropicClient->isEnabled()) {
             return $this->generateWithMCP($type, $options, $styleLevel);
         }
-        
+
         // Fallback to template-based generation
         return $this->generateFromTemplate($type, $options, $styleLevel);
     }
@@ -40,13 +41,14 @@ class HTMLGenerator
     protected function generateWithMCP(string $type, array $options, string $styleLevel): string
     {
         $prompt = $this->buildPrompt($type, $options);
-        
+
         $context = [
             'type' => $type,
             'style_level' => $styleLevel,
+            'max_tokens' => (int) ($options['max_tokens'] ?? config('mcp.anthropic.max_tokens', 4096)),
             'options' => $options,
         ];
-        
+
         return $this->anthropicClient->generate($prompt, $context);
     }
 
@@ -56,7 +58,7 @@ class HTMLGenerator
     protected function generateFromTemplate(string $type, array $options, string $styleLevel): string
     {
         $generator = $this->getTemplateGenerator($type);
-        
+
         return $generator->generate($options, $styleLevel);
     }
 
@@ -76,20 +78,20 @@ class HTMLGenerator
     {
         // Use semantic generator by default
         $useSemanticClasses = config('mcp.use_semantic_classes', true);
-        
+
         $suffix = $useSemanticClasses ? 'SemanticGenerator' : 'Generator';
-        $className = 'App\\Services\\Templates\\' . studly_case($type) . $suffix;
-        
+        $className = 'App\\Services\\Templates\\'.studly_case($type).$suffix;
+
         // Fallback to non-semantic if semantic doesn't exist
-        if (!class_exists($className)) {
-            $className = 'App\\Services\\Templates\\' . studly_case($type) . 'Generator';
+        if (! class_exists($className)) {
+            $className = 'App\\Services\\Templates\\'.studly_case($type).'Generator';
         }
-        
-        if (!class_exists($className)) {
+
+        if (! class_exists($className)) {
             throw new \InvalidArgumentException("Template generator for type '{$type}' not found");
         }
-        
-        return new $className();
+
+        return new $className;
     }
 
     /**
@@ -98,9 +100,9 @@ class HTMLGenerator
     protected function validateOptions(string $type, array $options): void
     {
         $rules = $this->getValidationRules($type);
-        
+
         $validator = Validator::make($options, $rules);
-        
+
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
@@ -114,8 +116,8 @@ class HTMLGenerator
         $baseRules = [
             'style_level' => 'sometimes|in:full,mid,low',
         ];
-        
-        $typeRules = match($type) {
+
+        $typeRules = match ($type) {
             'landing_page' => [
                 'company_name' => 'sometimes|string|max:255',
                 'industry' => 'sometimes|string|max:255',
@@ -124,7 +126,7 @@ class HTMLGenerator
             ],
             default => [],
         };
-        
+
         return array_merge($baseRules, $typeRules);
     }
 
@@ -151,12 +153,12 @@ class HTMLGenerator
     {
         // Basic HTML formatting
         $formatted = preg_replace('/>\s+</', ">\n<", $html);
-        
+
         // Indent nested elements
-        $dom = new \DOMDocument();
+        $dom = new \DOMDocument;
         @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $dom->formatOutput = true;
-        
+
         return $dom->saveHTML() ?: $html;
     }
 
@@ -167,32 +169,32 @@ class HTMLGenerator
     {
         $issues = [];
         $guardrails = config('mcp.guardrails');
-        
-        $dom = new \DOMDocument();
+
+        $dom = new \DOMDocument;
         @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        
+
         // Check nesting depth
         $maxDepth = $this->getMaxNestingDepth($dom->documentElement);
         if ($maxDepth > $guardrails['max_nesting_depth']) {
             $issues[] = "Nesting depth ({$maxDepth}) exceeds maximum ({$guardrails['max_nesting_depth']})";
         }
-        
+
         // Check element count
         $elementCount = $dom->getElementsByTagName('*')->length;
         if ($elementCount > $guardrails['max_element_count']) {
             $issues[] = "Element count ({$elementCount}) exceeds maximum ({$guardrails['max_element_count']})";
         }
-        
+
         // Check for disallowed tags
         if ($guardrails['allowed_tags']) {
             $allElements = $dom->getElementsByTagName('*');
             foreach ($allElements as $element) {
-                if (!in_array($element->nodeName, $guardrails['allowed_tags'])) {
+                if (! in_array($element->nodeName, $guardrails['allowed_tags'])) {
                     $issues[] = "Disallowed tag found: {$element->nodeName}";
                 }
             }
         }
-        
+
         return $issues;
     }
 
@@ -202,7 +204,7 @@ class HTMLGenerator
     protected function getMaxNestingDepth(\DOMNode $node, int $depth = 0): int
     {
         $maxDepth = $depth;
-        
+
         if ($node->hasChildNodes()) {
             foreach ($node->childNodes as $child) {
                 if ($child->nodeType === XML_ELEMENT_NODE) {
@@ -211,7 +213,7 @@ class HTMLGenerator
                 }
             }
         }
-        
+
         return $maxDepth;
     }
 }
