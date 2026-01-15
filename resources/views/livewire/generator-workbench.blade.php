@@ -28,15 +28,36 @@
                 <!-- Input Form -->
                 <div class="p-6 border-b border-gray-200 space-y-4">
                     <div>
-                        <label for="prompt" class="block text-sm font-medium text-gray-700 mb-2">
-                            Describe what you want to build
-                        </label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="prompt" class="block text-sm font-medium text-gray-700">
+                                Describe what you want to build
+                            </label>
+                            <button 
+                                wire:click="useExample"
+                                type="button"
+                                class="text-xs px-2 py-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition"
+                            >
+                                Try Example
+                            </button>
+                        </div>
                         <textarea 
                             wire:model="prompt"
                             id="prompt"
                             rows="3"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder="E.g., A landing page for a SaaS product with hero section, features, and pricing..."
+                            placeholder=""
+                            x-data="{ 
+                                placeholders: @js($examplePrompts),
+                                currentIndex: 0,
+                                updatePlaceholder() {
+                                    this.$el.placeholder = this.placeholders[this.currentIndex];
+                                    this.currentIndex = (this.currentIndex + 1) % this.placeholders.length;
+                                }
+                            }"
+                            x-init="
+                                updatePlaceholder();
+                                setInterval(() => updatePlaceholder(), 3000);
+                            "
                             @if($isGenerating) disabled @endif
                         ></textarea>
                         @error('prompt') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
@@ -79,10 +100,12 @@
                     <button 
                         wire:click="generate"
                         @if($isGenerating) disabled @endif
-                        class="w-full px-6 py-3 text-white bg-blue-600 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+                        class="w-full px-6 py-3 text-white rounded-lg font-medium disabled:cursor-not-allowed transition relative overflow-hidden"
+                        :class="@js($isGenerating) ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'"
                     >
                         @if($isGenerating)
-                            <span class="flex items-center justify-center">
+                            <div class="absolute inset-0 rainbow-progress"></div>
+                            <span class="relative z-10 flex items-center justify-center">
                                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -93,6 +116,25 @@
                             Generate HTML
                         @endif
                     </button>
+
+                    <style>
+                        @keyframes rainbow {
+                            0% { background-position: 0% 50%; }
+                            50% { background-position: 100% 50%; }
+                            100% { background-position: 0% 50%; }
+                        }
+                        
+                        .rainbow-progress {
+                            background: linear-gradient(90deg, 
+                                #ff0000, #ff7f00, #ffff00, #00ff00, 
+                                #0000ff, #4b0082, #9400d3,
+                                #ff0000, #ff7f00, #ffff00
+                            );
+                            background-size: 200% 100%;
+                            animation: rainbow 2s linear infinite;
+                            opacity: 0.8;
+                        }
+                    </style>
 
                     @if($error)
                         <div class="p-4 bg-red-50 border border-red-200 rounded-lg">

@@ -18,6 +18,14 @@ class GeneratorWorkbench extends Component
     public ?string $error = null;
     public bool $showPreview = false;
 
+    public array $examplePrompts = [
+        'A small flower company called Grace\'s Flowers located in 21756',
+        'A modern SaaS platform for project management teams',
+        'A local coffee shop with organic beans and cozy atmosphere',
+        'A fitness coaching service specializing in weight loss',
+        'A boutique hotel near the beach with ocean views',
+    ];
+
     protected $rules = [
         'prompt' => 'required|min:10|max:1000',
         'styleLevel' => 'required|in:full,mid,low',
@@ -58,6 +66,11 @@ class GeneratorWorkbench extends Component
     public function clear(): void
     {
         $this->reset(['generatedHtml', 'error', 'showPreview']);
+    }
+
+    public function useExample(): void
+    {
+        $this->prompt = $this->examplePrompts[array_rand($this->examplePrompts)];
     }
 
     public function render()
