@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\MCP\MCPClient;
+use App\Services\AI\AnthropicClient;
 use Illuminate\Console\Command;
 
 class MCPStatusCommand extends Command
@@ -17,12 +17,12 @@ class MCPStatusCommand extends Command
      */
     protected $description = 'Check AI content generation status and Anthropic API connection';
 
-    protected MCPClient $mcpClient;
+    protected AnthropicClient $anthropicClient;
 
     /**
      * Create a new command instance.
      */
-    public function __construct(MCPClient $mcpClient)
+    public function __construct(AnthropicClient $anthropicClient)
     {
         parent::__construct();
         $this->mcpClient = $mcpClient;

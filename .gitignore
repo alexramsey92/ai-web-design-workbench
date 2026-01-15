@@ -5,6 +5,11 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+/storage/logs/*
+!/storage/logs/.gitkeep
 /vendor
 .env
 .env.backup

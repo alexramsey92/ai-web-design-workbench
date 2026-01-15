@@ -2,18 +2,18 @@
 
 namespace App\Services\Generation;
 
-use App\Services\MCP\MCPClient;
+use App\Services\AI\AnthropicClient;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class HTMLGenerator
 {
-    protected MCPClient $mcpClient;
+    protected AnthropicClient $anthropicClient;
     protected array $styleLevel = ['full', 'mid', 'low'];
 
-    public function __construct(MCPClient $mcpClient)
+    public function __construct(AnthropicClient $anthropicClient)
     {
-        $this->mcpClient = $mcpClient;
+        $this->anthropicClient = $anthropicClient;
     }
 
     /**
@@ -25,8 +25,8 @@ class HTMLGenerator
         
         $styleLevel = $options['style_level'] ?? config('mcp.default_style_level', 'full');
         
-        // If MCP is enabled, use AI generation
-        if ($this->mcpClient->isEnabled()) {
+        // If AI is enabled, use Anthropic generation
+        if ($this->anthropicClient->isEnabled()) {
             return $this->generateWithMCP($type, $options, $styleLevel);
         }
         
@@ -47,7 +47,7 @@ class HTMLGenerator
             'options' => $options,
         ];
         
-        return $this->mcpClient->generate($prompt, $context);
+        return $this->anthropicClient->generate($prompt, $context);
     }
 
     /**
