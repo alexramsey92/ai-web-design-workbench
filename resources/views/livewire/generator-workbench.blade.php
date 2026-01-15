@@ -193,7 +193,7 @@
                                 <div class="flex items-start justify-between">
                                     <div>
                                         <div class="font-medium text-gray-800">Claude Service</div>
-                                        <div class="text-gray-500 mt-1">Request: <span class="text-gray-700">{{ Str::limit($claudeService['request']['prompt'] ?? ($claudeService['request']['payload']['messages'][0]['content'] ?? ''), 160) }}</span></div>
+                                        <div class="text-gray-500 mt-1">Request: <span class="text-gray-700">{{ \Illuminate\Support\Str::limit($claudeService['request']['prompt'] ?? ($claudeService['request']['payload']['messages'][0]['content'] ?? ''), 160) }}</span></div>
                                         <div class="text-gray-500">Model: <span class="text-gray-700">{{ $claudeService['request']['payload']['model'] ?? 'n/a' }}</span> • Max tokens: <span class="text-gray-700">{{ $claudeService['request']['payload']['max_tokens'] ?? 'n/a' }}</span></div>
                                     </div>
                                     <div class="text-right">
@@ -202,7 +202,7 @@
                                     </div>
                                 </div>
                                 @if(!empty($claudeService['response']['body']))
-                                    <div class="mt-2 text-gray-600">Response snippet: <span class="text-gray-800">{{ Str::limit($claudeService['response']['body'], 240) }}</span></div>
+                                    <div class="mt-2 text-gray-600">Response snippet: <span class="text-gray-800">{{ \Illuminate\Support\Str::limit($claudeService['response']['body'], 240) }}</span></div>
                                 @endif
                             </div>
                         @endif
