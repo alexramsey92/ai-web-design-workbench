@@ -4,7 +4,7 @@
 
 > **A universal workbench for rapidly generating production-ready HTML using AI, Tailwind CSS, and semantic design patterns.**
 
-https://github.com/user-attachments/assets/53b139a1-2af8-4630-be66-5d530796b383
+<img width="2067" height="1016" alt="Screenshot 2026-01-15 175527" src="https://github.com/user-attachments/assets/c3dee3a9-dba4-49ea-9930-9b79ab2f82d2" />
 
 A flexible tool that meets you where you work. Generate beautiful landing pages through your IDE, a browser-based code editor, or command-line interface—your choice.
 
