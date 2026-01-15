@@ -17,8 +17,6 @@ class GeneratorWorkbench extends Component
     public bool $isGenerating = false;
     public ?string $error = null;
     public bool $showPreview = false;
-    public int $elapsedTime = 0;
-    public int $estimatedTime = 45;
 
     public array $examplePrompts = [
         'An artisan coffee roastery in Portland that sources single-origin beans directly from farmers',
@@ -45,7 +43,6 @@ class GeneratorWorkbench extends Component
         $this->isGenerating = true;
         $this->error = null;
         $this->generatedHtml = '';
-        $this->elapsedTime = 0;
         
         // Allow UI to update before blocking call
         $this->dispatch('$refresh');
@@ -73,20 +70,20 @@ class GeneratorWorkbench extends Component
             $this->error = 'Generation failed: ' . $e->getMessage();
         } finally {
             $this->isGenerating = false;
-            $this->elapsedTime = 0;
-        }
-    }
-
-    public function incrementTimer(): void
-    {
-        if ($this->isGenerating) {
-            $this->elapsedTime++;
         }
     }
 
     public function clear(): void
     {
         $this->reset(['generatedHtml', 'error', 'showPreview']);
+        session()->forget('preview_html');
+    }
+
+    public function getPreviewUrl(): string
+    {
+        // Store HTML in session to avoid 414 URI Too Long errors
+        session(['preview_html' => $this->generatedHtml]);
+        return route('content.show') . '?t=' . time();
     }
 
     public function useExample(): void

@@ -11,7 +11,8 @@ Route::get('/workbench', function () {
 })->name('workbench');
 
 Route::get('/content', function () {
-    $html = request()->query('html', '');
+    // Get HTML from session instead of query param to avoid 414 URI Too Long errors
+    $html = session('preview_html', request()->query('html', ''));
     
     // Validate HTML is from authenticated session
     if (!session()->has('_token')) {

@@ -95,7 +95,31 @@
                         </div>
                     </div>
 
-                    <div wire:poll.1s="incrementTimer" class="space-y-2">
+                    <div x-data="{ 
+                        generating: @entangle('isGenerating'),
+                        elapsedTime: 0,
+                        estimatedTime: 45,
+                        interval: null,
+                        startTimer() {
+                            this.elapsedTime = 0;
+                            this.interval = setInterval(() => {
+                                if (this.generating) {
+                                    this.elapsedTime++;
+                                } else {
+                                    this.stopTimer();
+                                }
+                            }, 1000);
+                        },
+                        stopTimer() {
+                            if (this.interval) {
+                                clearInterval(this.interval);
+                                this.interval = null;
+                            }
+                            this.elapsedTime = 0;
+                        }
+                    }"
+                    x-init="$watch('generating', value => { if (value) startTimer(); else stopTimer(); })"
+                    class="space-y-2">
                         <button 
                             wire:click="generate" 
                             wire:loading.attr="disabled"
@@ -104,25 +128,20 @@
                             <span wire:loading.remove wire:target="generate">Generate HTML</span>
                             <span wire:loading wire:target="generate" class="inline-flex items-center gap-2">
                                 <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                                <span class="rainbow-text">Generating... {{ $elapsedTime }}s</span>
+                                <span class="rainbow-text" x-text="'Generating... ' + elapsedTime + 's'">Generating...</span>
                             </span>
                             
                             <!-- Progress bar -->
                             <div wire:loading wire:target="generate" class="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
                                 <div class="h-full bg-white/60 transition-all duration-1000 ease-linear" 
-                                     style="width: {{ min(100, ($elapsedTime / $estimatedTime) * 100) }}%"></div>
+                                     :style="'width: ' + Math.min(100, (elapsedTime / estimatedTime) * 100) + '%'"></div>
                             </div>
                         </button>
                         
                         <!-- Estimated time remaining -->
                         <div wire:loading wire:target="generate" class="text-center">
-                            <p class="text-xs text-gray-500">
-                                @if($elapsedTime < $estimatedTime)
-                                    Estimated time remaining: ~{{ $estimatedTime - $elapsedTime }}s
-                                @else
-                                    Almost there...
-                                @endif
-                            </p>
+                            <p class="text-xs text-gray-500" x-show="elapsedTime < estimatedTime" x-text="'Estimated time remaining: ~' + (estimatedTime - elapsedTime) + 's'"></p>
+                            <p class="text-xs text-gray-500" x-show="elapsedTime >= estimatedTime">Almost there...</p>
                         </div>
                     </div>
 
@@ -134,17 +153,20 @@
                 </div>
 
                 <!-- Code Editor -->
-                <div class="flex-1 bg-gray-50 overflow-auto">
+                <div class="flex-1 bg-gray-50 overflow-hidden flex flex-col">
                     @if($generatedHtml)
-                        <div class="p-6">
+                        <div class="p-6 pb-3">
                             <div class="flex items-center justify-between mb-3">
                                 <h3 class="text-sm font-semibold text-gray-700">Generated HTML</h3>
                                 <span class="text-xs text-gray-500">{{ strlen($generatedHtml) }} characters</span>
                             </div>
+                        </div>
+                        <div class="flex-1 px-6 pb-6 overflow-hidden">
                             <textarea 
                                 wire:model.live="generatedHtml"
-                                class="w-full h-full min-h-[400px] bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm border-0 focus:ring-2 focus:ring-blue-500"
-                                style="font-family: 'Courier New', monospace;"
+                                class="w-full h-full bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm border-0 focus:ring-2 focus:ring-blue-500 resize-none"
+                                style="font-family: 'Fira Code', 'Courier New', monospace; line-height: 1.6; tab-size: 2;"
+                                spellcheck="false"
                             ></textarea>
                         </div>
                     @else
@@ -169,7 +191,7 @@
                     @if($generatedHtml)
                         <div class="bg-white rounded-lg shadow-sm h-full overflow-auto">
                             <iframe 
-                                src="{{ route('content.show') }}?html={{ urlencode($generatedHtml) }}"
+                                src="{{ $this->getPreviewUrl() }}"
                                 class="w-full h-full border-0"
                                 sandbox="allow-same-origin allow-scripts allow-forms"
                                 title="HTML Preview"
