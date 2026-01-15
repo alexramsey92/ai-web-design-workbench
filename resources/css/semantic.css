@@ -68,7 +68,7 @@
   }
 
   .btn-secondary {
-    @apply px-6 py-3 text-base font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 shadow transition-all duration-200;
+    @apply px-6 py-3 text-base font-medium rounded-lg border-2 bg-white/80 text-current border-current hover:bg-current hover:text-white shadow transition-all duration-200;
   }
 
   /* Content Blocks */
