@@ -12,18 +12,21 @@ class GeneratorWorkbench extends Component
 {
     public string $prompt = '';
     public string $styleLevel = 'full';
-    public string $pageType = 'landing-page';
+    public string $pageType = 'landing';
     public string $generatedHtml = '';
     public bool $isGenerating = false;
     public ?string $error = null;
     public bool $showPreview = false;
+    public int $elapsedTime = 0;
+    public int $estimatedTime = 45;
 
     public array $examplePrompts = [
-        'A small flower company called Grace\'s Flowers located in 21756',
-        'A modern SaaS platform for project management teams',
-        'A local coffee shop with organic beans and cozy atmosphere',
-        'A fitness coaching service specializing in weight loss',
-        'A boutique hotel near the beach with ocean views',
+        'An artisan coffee roastery in Portland that sources single-origin beans directly from farmers',
+        'A mindfulness app helping busy professionals reduce stress through 5-minute guided meditations',
+        'A vintage vinyl record shop with listening stations and rare collector editions',
+        'A plant-based meal prep service delivering fresh, chef-crafted meals across Austin',
+        'An AI-powered fitness coach that creates personalized workout plans and tracks progress',
+        'A boutique glamping retreat in the mountains with stargazing decks and gourmet dining',
     ];
 
     protected $rules = [
@@ -34,11 +37,15 @@ class GeneratorWorkbench extends Component
 
     public function generate(): void
     {
-        $this->validate();
+        // Increase PHP execution time for AI generation
+        set_time_limit(120);
         
+        $this->validate();
+
         $this->isGenerating = true;
         $this->error = null;
         $this->generatedHtml = '';
+        $this->elapsedTime = 0;
         
         // Allow UI to update before blocking call
         $this->dispatch('$refresh');
@@ -66,6 +73,14 @@ class GeneratorWorkbench extends Component
             $this->error = 'Generation failed: ' . $e->getMessage();
         } finally {
             $this->isGenerating = false;
+            $this->elapsedTime = 0;
+        }
+    }
+
+    public function incrementTimer(): void
+    {
+        if ($this->isGenerating) {
+            $this->elapsedTime++;
         }
     }
 

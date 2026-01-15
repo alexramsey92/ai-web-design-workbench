@@ -18,11 +18,11 @@ return [
     'anthropic' => [
         'api_key' => env('ANTHROPIC_API_KEY', ''),
         'model' => env('ANTHROPIC_MODEL', 'claude-sonnet-4-20250514'),
-        'max_tokens' => env('ANTHROPIC_MAX_TOKENS', 4096),
-        'temperature' => env('ANTHROPIC_TEMPERATURE', 0.7),
+        'max_tokens' => (int) env('ANTHROPIC_MAX_TOKENS', 4096),
+        'temperature' => (float) env('ANTHROPIC_TEMPERATURE', 0.7),
     ],
     
-    'timeout' => env('AI_TIMEOUT', 30),
+    'timeout' => env('AI_TIMEOUT', 60),
     
     'rate_limiting' => [
         'enabled' => env('AI_RATE_LIMIT_ENABLED', true),

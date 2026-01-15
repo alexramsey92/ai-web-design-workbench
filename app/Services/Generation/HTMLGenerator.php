@@ -65,28 +65,8 @@ class HTMLGenerator
      */
     protected function buildPrompt(string $type, array $options): string
     {
-        $systemPrompt = config('mcp.prompts.system');
-        $typePrompts = config("mcp.prompts.{$type}", []);
-        
-        $prompt = $systemPrompt . "\n\n";
-        
-        foreach ($options as $key => $value) {
-            if (isset($typePrompts[$key])) {
-                $sectionPrompt = $typePrompts[$key];
-                
-                // Replace placeholders
-                foreach ($options as $optionKey => $optionValue) {
-                    $placeholder = '{' . $optionKey . '}';
-                    if (is_string($optionValue)) {
-                        $sectionPrompt = str_replace($placeholder, $optionValue, $sectionPrompt);
-                    }
-                }
-                
-                $prompt .= $sectionPrompt . "\n";
-            }
-        }
-        
-        return $prompt;
+        // Use the user's actual prompt/description
+        return $options['prompt'] ?? 'A professional website';
     }
 
     /**

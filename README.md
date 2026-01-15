@@ -682,15 +682,18 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## 🙏 Acknowledgments
 
-- Built with [Laravel](https://laravel.com)
+Built quickly 🏎️ with [Laravel](https://laravel.com) and [Laravel Boost](https://github.com/laravel/boost)
+
 - Styled with [Tailwind CSS](https://tailwindcss.com)
-- Inspired by the Laravel Boost MCP project
+- Powered by [Anthropic Claude](https://www.anthropic.com)
+- Made with ❤️ by [Alexander Ramsey](https://alexanderramsey.com)
 
 ## 📬 Support
 
 - Open an issue for bug reports or feature requests
 - Star the repo if you find it useful!
 - Share with other developers who might benefit
+- Check out more projects at [alexanderramsey.com](https://alexanderramsey.com)
 
 ---
 

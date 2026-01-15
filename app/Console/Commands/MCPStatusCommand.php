@@ -25,7 +25,7 @@ class MCPStatusCommand extends Command
     public function __construct(AnthropicClient $anthropicClient)
     {
         parent::__construct();
-        $this->mcpClient = $mcpClient;
+        $this->anthropicClient = $anthropicClient;
     }
 
     /**

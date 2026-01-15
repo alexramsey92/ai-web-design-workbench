@@ -40,7 +40,15 @@
                                 Try Example
                             </button>
                         </div>
-                        <div x-data="{ placeholders: @js($examplePrompts), currentIndex: 0 }" x-init="setInterval(() => { currentIndex = (currentIndex + 1) % placeholders.length; }, 3000)">
+                        <div x-data="{ 
+                            placeholders: @js($examplePrompts), 
+                            currentIndex: 0,
+                            init() {
+                                setInterval(() => {
+                                    this.currentIndex = (this.currentIndex + 1) % this.placeholders.length;
+                                }, 3000);
+                            }
+                        }">
                             <textarea 
                                 wire:model="prompt"
                                 id="prompt"
@@ -87,17 +95,36 @@
                         </div>
                     </div>
 
-                    <button 
-                        wire:click="generate" 
-                        wire:loading.attr="disabled"
-                        class="w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <span wire:loading.remove wire:target="generate">Generate HTML</span>
-                        <span wire:loading wire:target="generate" class="inline-flex items-center gap-2">
-                            <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                            <span class="rainbow-text">Generating...</span>
-                        </span>
-                    </button>
+                    <div wire:poll.1s="incrementTimer" class="space-y-2">
+                        <button 
+                            wire:click="generate" 
+                            wire:loading.attr="disabled"
+                            class="w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden"
+                        >
+                            <span wire:loading.remove wire:target="generate">Generate HTML</span>
+                            <span wire:loading wire:target="generate" class="inline-flex items-center gap-2">
+                                <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                <span class="rainbow-text">Generating... {{ $elapsedTime }}s</span>
+                            </span>
+                            
+                            <!-- Progress bar -->
+                            <div wire:loading wire:target="generate" class="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+                                <div class="h-full bg-white/60 transition-all duration-1000 ease-linear" 
+                                     style="width: {{ min(100, ($elapsedTime / $estimatedTime) * 100) }}%"></div>
+                            </div>
+                        </button>
+                        
+                        <!-- Estimated time remaining -->
+                        <div wire:loading wire:target="generate" class="text-center">
+                            <p class="text-xs text-gray-500">
+                                @if($elapsedTime < $estimatedTime)
+                                    Estimated time remaining: ~{{ $estimatedTime - $elapsedTime }}s
+                                @else
+                                    Almost there...
+                                @endif
+                            </p>
+                        </div>
+                    </div>
 
                     @if($error)
                         <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
