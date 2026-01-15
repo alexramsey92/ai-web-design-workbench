@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Container */
+  .container {
+    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+
+  /* Typography */
+  .heading {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight;
+  }
+
+  .subheading {
+    @apply text-xl md:text-2xl text-gray-700 leading-relaxed;
+  }
+
+  .lead {
+    @apply text-lg md:text-xl text-gray-600;
+  }
+
+  .text-brand {
+    @apply text-primary-600;
+  }
+
+  .text-accent {
+    @apply text-primary-700;
+  }
+
+  /* Sections */
+  .section {
+    @apply py-16 lg:py-24;
+  }
+
+  .hero {
+    @apply py-20 lg:py-32 text-center;
+  }
+
+  .gradient-hero {
+    @apply bg-gradient-to-r from-primary-600 to-primary-700 text-white;
+  }
+
+  .gradient-accent {
+    @apply bg-gradient-to-br from-primary-600 to-primary-700 text-white;
+  }
+
+  .bg-accent {
+    @apply bg-gray-50;
+  }
+
+  .bg-brand {
+    @apply bg-primary-50;
+  }
+
+  .cta-section {
+    @apply py-20 lg:py-32 text-center;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply px-8 py-4 text-lg font-semibold rounded-lg bg-white text-primary-600 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200;
+  }
+
+  .btn-outline {
+    @apply px-8 py-4 text-lg font-semibold rounded-lg bg-transparent text-white border-2 border-white hover:bg-white hover:text-primary-600 transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 text-base font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 shadow transition-all duration-200;
+  }
+
+  /* Content Blocks */
+  .content-block {
+    @apply max-w-4xl mx-auto;
+  }
+
+  .prose {
+    @apply text-gray-700 leading-relaxed;
+  }
+
+  .prose ul {
+    @apply space-y-2 ml-6 list-disc;
+  }
+
+  .prose li {
+    @apply text-gray-700;
+  }
+
+  .prose p {
+    @apply mb-4;
+  }
+
+  .prose strong {
+    @apply font-semibold text-gray-900;
+  }
+
+  .prose em {
+    @apply italic text-gray-600;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200;
+  }
+
+  .feature-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
+  }
+
+  .feature-card {
+    @apply bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-200;
+  }
+
+  .feature-card h3 {
+    @apply text-xl font-semibold text-gray-900 mb-3;
+  }
+
+  .feature-card p {
+    @apply text-gray-600 leading-relaxed;
+  }
+
+  /* Alerts */
+  .alert {
+    @apply p-6 rounded-lg;
+  }
+
+  .alert-success {
+    @apply bg-green-50 border-2 border-green-200 text-green-900;
+  }
+
+  .alert-info {
+    @apply bg-blue-50 border-2 border-blue-200 text-blue-900;
+  }
+
+  .alert-warning {
+    @apply bg-yellow-50 border-2 border-yellow-200 text-yellow-900;
+  }
+
+  /* Mid Styling Variants */
+  .heading-mid {
+    @apply text-2xl md:text-3xl font-bold text-gray-900;
+  }
+
+  .subheading-mid {
+    @apply text-lg md:text-xl text-gray-700;
+  }
+
+  .section-mid {
+    @apply py-12 lg:py-16;
+  }
+
+  .btn-primary-mid {
+    @apply px-6 py-3 text-base font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 shadow;
+  }
+
+  /* Low Styling Variants */
+  .heading-low {
+    @apply text-2xl md:text-3xl font-bold text-gray-900;
+  }
+
+  .subheading-low {
+    @apply text-lg text-gray-700;
+  }
+
+  .section-low {
+    @apply py-12;
+  }
+
+  .btn-primary-low {
+    @apply px-6 py-3 rounded-lg bg-primary-600 text-white;
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
