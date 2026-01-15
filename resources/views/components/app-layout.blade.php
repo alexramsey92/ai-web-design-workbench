@@ -7,8 +7,34 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
+    <!-- Livewire NProgress shim: ensure import_nprogress.default.configure exists for Livewire -->
+    <script>
+        (function() {
+            // Create a safe shim that delegates to window.NProgress when available
+            function safeN() {
+                const base = window.NProgress || {};
+                return {
+                    configure: base.configure ? base.configure.bind(base) : function() {},
+                    start: base.start ? base.start.bind(base) : function() {},
+                    done: base.done ? base.done.bind(base) : function() {},
+                    set: base.set ? base.set.bind(base) : function() {},
+                    inc: base.inc ? base.inc.bind(base) : function() {},
+                };
+            }
+
+            if (!window.import_nprogress) {
+                window.import_nprogress = { default: safeN() };
+            } else if (!window.import_nprogress.default || !window.import_nprogress.default.configure) {
+                window.import_nprogress.default = safeN();
+            }
+        })();
+    </script>
     
     <style>
         @keyframes rainbow {

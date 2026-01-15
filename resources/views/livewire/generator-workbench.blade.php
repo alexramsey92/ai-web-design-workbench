@@ -1,30 +1,8 @@
-<div class="fixed inset-0 bg-gray-50 overflow-hidden"
-     x-data="{
-        hasDraft: false,
-        draftHtml: '',
-        init() {
-            // Load draft from localStorage on mount
-            const draft = localStorage.getItem('html-draft');
-            if (draft && draft.trim().length > 0) {
-                this.hasDraft = true;
-                this.draftHtml = draft;
-                setTimeout(() => {
-                    $wire.loadDraft(draft);
-                }, 100);
-            }
-        }
-     }"
-     x-on:clear-draft.window="localStorage.removeItem('html-draft'); hasDraft = false; draftHtml = ''"
-     x-on:input.window="hasDraft = (localStorage.getItem('html-draft') || '').trim().length > 0">
+<div class="fixed inset-0 bg-gray-50 overflow-hidden">
     <div class="h-full flex flex-col">
         <!-- Draft Banner -->
-        <div x-show="hasDraft" 
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-2"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 translate-y-0"
-             x-transition:leave-end="opacity-0 -translate-y-2"
+        <div id="draft-banner" 
+             style="display: none;"
              class="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-200 px-6 py-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
@@ -40,7 +18,7 @@
                     </div>
                 </div>
                 <button 
-                    @click="$wire.clear(); hasDraft = false"
+                    onclick="clearDraft()"
                     class="text-xs text-green-700 hover:text-green-900 font-medium px-3 py-1.5 rounded-lg hover:bg-green-100 transition">
                     <i class="fas fa-times mr-1.5"></i>Dismiss
                 </button>
@@ -66,27 +44,16 @@
                                 Try Example
                             </button>
                         </div>
-                        <div x-data="{ 
-                            placeholders: @js($examplePrompts), 
-                            currentIndex: 0,
-                            init() {
-                                setInterval(() => {
-                                    this.currentIndex = (this.currentIndex + 1) % this.placeholders.length;
-                                }, 3000);
-                            }
-                        }">
-                            <textarea 
-                                wire:model="prompt"
-                                id="prompt"
-                                rows="3"
-                                class="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
-                                x-bind:placeholder="placeholders[currentIndex]"
-                                @if($isGenerating) disabled @endif
-                            ></textarea>
-                        </div>
+                        <textarea 
+                            wire:model="prompt"
+                            id="prompt"
+                            rows="3"
+                            class="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
+                            @if($isGenerating) disabled @endif
+                        ></textarea>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label for="styleLevel" class="block text-sm font-medium text-gray-700 mb-2">
                                 Style Level
@@ -117,6 +84,22 @@
                                 <option value="business">Business Page</option>
                                 <option value="portfolio">Portfolio</option>
                                 <option value="blog">Blog Page</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="maxTokens" class="block text-sm font-medium text-gray-700 mb-2">
+                                Output Length
+                            </label>
+                            <select 
+                                wire:model="maxTokens"
+                                id="maxTokens"
+                                class="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                @if($isGenerating) disabled @endif
+                            >
+                                @foreach($tokenOptions as $tokens => $label)
+                                    <option value="{{ $tokens }}">{{ $label }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -196,13 +179,7 @@
                         </div>
                     </div>
                     <div class="flex-1 px-6 pb-6 overflow-hidden">
-                        <textarea 
-                            wire:model.live="generatedHtml"
-                            x-on:input="localStorage.setItem('html-draft', $event.target.value)"
-                            class="w-full h-full bg-gray-900 text-gray-300 p-4 rounded-lg font-mono text-sm border-0 focus:ring-2 focus:ring-blue-500 resize-none"
-                            style="font-family: 'Fira Code', 'Courier New', monospace; line-height: 1.6; tab-size: 2;"
-                            spellcheck="false"
-                        ></textarea>
+                        <div id="monaco-editor" class="w-full h-full rounded-lg overflow-hidden border-0"></div>
                     </div>
                 </div>
             </div>
@@ -239,11 +216,207 @@
     </div>
 </div>
 
-@script
 <script>
+    let editor = null;
+    let isUpdatingFromWire = false;
+    let isUpdatingFromEditor = false;
+
+    // Placeholder manager (Livewire-aware)
+    const placeholders = @js($examplePrompts);
+    const placeholderManager = (function() {
+        let idx = 0;
+        let timer = null;
+        const el = () => document.getElementById('prompt');
+
+        function tick() {
+            const input = el();
+            if (!input) return;
+            if (input.value.trim() === '') {
+                input.placeholder = placeholders[idx % placeholders.length];
+                idx++;
+            }
+        }
+
+        function start() {
+            stop();
+            tick();
+            timer = setInterval(tick, 3000);
+        }
+
+        function stop() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        function restartIfEmpty() {
+            const input = el();
+            if (!input) return;
+            if (input.value.trim() === '') start();
+            else stop();
+        }
+
+        return { start, stop, restartIfEmpty };
+    })();
+
+    // Wire up input listener and Livewire hooks
+    function attachPromptListeners() {
+        const promptInput = document.getElementById('prompt');
+        if (!promptInput) return;
+
+        // Stop cycling while user types
+        promptInput.removeEventListener('__placeholder_input', promptInput.__placeholder_handler);
+        promptInput.__placeholder_handler = function() {
+            if (this.value.trim() === '') {
+                placeholderManager.start();
+            } else {
+                placeholderManager.stop();
+            }
+        };
+        promptInput.addEventListener('input', promptInput.__placeholder_handler, { passive: true });
+
+        // Ensure correct state after Livewire updates
+        if (window.Livewire && Livewire.hook) {
+            if (!window.__prompt_livewire_hook_registered) {
+                window.__prompt_livewire_hook_registered = true;
+
+                // After messages are processed, re-attach handlers in case Livewire replaced the element
+                Livewire.hook('message.processed', () => {
+                    setTimeout(() => {
+                        attachPromptListeners();
+                        placeholderManager.restartIfEmpty();
+                    }, 0);
+                });
+
+                // Prevent accidental toJSON method calls from reaching the server
+                Livewire.hook('message.sending', (message) => {
+                    try {
+                        if (message && message.components) {
+                            message.components.forEach((c) => {
+                                if (c.calls && Array.isArray(c.calls)) {
+                                    c.calls = c.calls.filter(call => call.method !== 'toJSON');
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        console.warn('Failed to sanitize Livewire message', e);
+                    }
+                });
+            }
+        }
+
+        // Start cycling on attach
+        placeholderManager.restartIfEmpty();
+    }
+
+    // Attach on load and after Livewire navigation
+    document.addEventListener('DOMContentLoaded', attachPromptListeners);
+    document.addEventListener('livewire:load', attachPromptListeners);
+    document.addEventListener('livewire:navigated', attachPromptListeners);
+
+    // Draft management
+    function checkDraft() {
+        const draft = localStorage.getItem('html-draft');
+        const banner = document.getElementById('draft-banner');
+        if (draft && draft.trim().length > 0 && banner) {
+            banner.style.display = 'block';
+            Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).call('loadDraft', draft);
+        }
+    }
+
+    function clearDraft() {
+        localStorage.removeItem('html-draft');
+        const banner = document.getElementById('draft-banner');
+        if (banner) banner.style.display = 'none';
+        Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).call('clear');
+    }
+
+    function updateDraft(value) {
+        if (value && value.trim().length > 0) {
+            localStorage.setItem('html-draft', value);
+            const banner = document.getElementById('draft-banner');
+            if (banner) banner.style.display = 'block';
+        }
+    }
+
+    // Monaco Editor
+    function initMonaco() {
+            // Load Monaco loader dynamically if needed to avoid AMD 'anonymous define' conflicts
+        function loadMonacoLoader(cb) {
+            if (window.require && window.require.config) {
+                return cb();
+            }
+
+            if (document.getElementById('monaco-loader')) {
+                // already loading; poll until ready
+                const poll = setInterval(() => {
+                    if (window.require && window.require.config) {
+                        clearInterval(poll);
+                        cb();
+                    }
+                }, 50);
+                return;
+            }
+
+            const s = document.createElement('script');
+            s.id = 'monaco-loader';
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
+            s.crossOrigin = 'anonymous';
+            s.onload = () => cb();
+            s.onerror = () => console.warn('Failed to load Monaco loader');
+            document.head.appendChild(s);
+        }
+
+        loadMonacoLoader(() => {
+            require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+            require(['vs/editor/editor.main'], function() {
+                editor = monaco.editor.create(document.getElementById('monaco-editor'), {
+                    value: @js($generatedHtml),
+                    language: 'html',
+                    theme: 'vs-dark',
+                    automaticLayout: true,
+                    fontSize: 14,
+                    lineNumbers: 'on',
+                    minimap: { enabled: true },
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    tabSize: 2,
+                    formatOnPaste: true,
+                    formatOnType: true,
+                });
+
+            // Listen for content changes in Monaco
+            editor.onDidChangeModelContent(() => {
+                if (!isUpdatingFromWire) {
+                    isUpdatingFromEditor = true;
+                    const value = editor.getValue();
+                    if (componentId) {
+                        Livewire.find(componentId).set('generatedHtml', value);
+                    }
+                    updateDraft(value);
+                    setTimeout(() => { isUpdatingFromEditor = false; }, 50);
+                }
+            });
+
+            // Listen for Livewire updates
+            Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+                succeed(({ snapshot, effect }) => {
+                    if (!isUpdatingFromEditor && component.id === componentId) {
+                        const newValue = component.canonical.data.generatedHtml || '';
+                        if (editor && editor.getValue() !== newValue) {
+                            isUpdatingFromWire = true;
+                            editor.setValue(newValue);
+                            setTimeout(() => { isUpdatingFromWire = false; }, 50);
+                        }
+                    }
+                });
+            });
+        });
+    }
+
     function copyToClipboard() {
-        const textarea = document.querySelector('textarea[wire\\:model\\.live="generatedHtml"]');
-        const code = textarea ? textarea.value : @js($generatedHtml);
+        const code = editor ? editor.getValue() : @js($generatedHtml);
         navigator.clipboard.writeText(code).then(() => {
             const button = event.target.closest('button');
             const originalText = button.innerHTML;
@@ -257,5 +430,26 @@
             }, 2000);
         });
     }
+
+    // Initialize everything when page loads
+    function initializeWorkbench() {
+        // Monaco, draft, and prompt handlers
+        if (typeof initMonaco === 'function') initMonaco();
+        if (typeof checkDraft === 'function') checkDraft();
+        attachPromptListeners();
+    }
+
+    document.addEventListener('livewire:navigated', () => {
+        initializeWorkbench();
+    });
+
+    // Run on initial load
+    if (document.readyState !== 'loading') {
+        setTimeout(initializeWorkbench, 100);
+    } else {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initializeWorkbench, 100);
+        });
+    }
 </script>
-@endscript
+

@@ -13,11 +13,19 @@ class GeneratorWorkbench extends Component
     public string $prompt = '';
     public string $styleLevel = 'full';
     public string $pageType = 'landing';
+    public int $maxTokens = 4096;
     public string $generatedHtml = '';
     public bool $isGenerating = false;
     public ?string $error = null;
     public bool $showPreview = false;
     public bool $hasDraft = false;
+
+    public array $tokenOptions = [
+        1024 => 'Short (1K tokens)',
+        2048 => 'Medium (2K tokens)',
+        4096 => 'Standard (4K tokens)',
+        8192 => 'Long (8K tokens)',
+    ];
 
     public array $examplePrompts = [
         'An artisan coffee roastery in Portland that sources single-origin beans directly from farmers',
@@ -32,6 +40,7 @@ class GeneratorWorkbench extends Component
         'prompt' => 'required|min:10|max:1000|string',
         'styleLevel' => 'required|in:full,mid,low',
         'pageType' => 'required|in:landing,business,portfolio,blog',
+        'maxTokens' => 'required|integer|in:1024,2048,4096,8192',
     ];
 
     public function generate(): void
@@ -58,6 +67,7 @@ class GeneratorWorkbench extends Component
                 'prompt' => $this->prompt,
                 'style_level' => $this->styleLevel,
                 'use_semantic' => true,
+                'max_tokens' => $this->maxTokens,
             ]);
 
             $this->showPreview = true;
@@ -97,6 +107,17 @@ class GeneratorWorkbench extends Component
         $this->hasDraft = false;
     }
 
+    /**
+     * Handle unexpected toJSON calls from Livewire client-side serialization.
+     * Some browser-side code may call toJSON during proxy collapse; handle gracefully.
+     */
+    public function toJSON($payload = null): array
+    {
+        Log::info('GeneratorWorkbench::toJSON called', ['payload' => $payload]);
+        // Return a safe, empty payload so Livewire requests don't 500
+        return ['ok' => true];
+    }
+
     public function getPreviewUrl(): string
     {
         // Store HTML in session to avoid 414 URI Too Long errors
@@ -125,6 +146,7 @@ class GeneratorWorkbench extends Component
         
         return view('livewire.generator-workbench', [
             'styleLevels' => $styleLevels,
+            'examplePrompts' => $this->examplePrompts,
         ]);
     }
 }
