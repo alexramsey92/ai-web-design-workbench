@@ -21,6 +21,7 @@ class GeneratorWorkbench extends Component
     public bool $hasDraft = false;
 
     public array $tokenOptions = [
+        512  => 'Very Short (512 tokens)',
         1024 => 'Short (1K tokens)',
         2048 => 'Medium (2K tokens)',
         4096 => 'Standard (4K tokens)',
@@ -40,7 +41,7 @@ class GeneratorWorkbench extends Component
         'prompt' => 'required|min:10|max:1000|string',
         'styleLevel' => 'required|in:full,mid,low',
         'pageType' => 'required|in:landing,business,portfolio,blog',
-        'maxTokens' => 'required|integer|in:1024,2048,4096,8192',
+        'maxTokens' => 'required|integer|in:512,1024,2048,4096,8192',
     ];
 
     public function generate(): void
