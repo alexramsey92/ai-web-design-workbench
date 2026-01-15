@@ -2,6 +2,8 @@
 
 > **An IDE-first developer tool for rapidly generating production-ready HTML using AI, Tailwind CSS, and configurable styling levels.**
 
+![Workbench Screenshot](docs/images/workbench-screenshot.png)
+
 Bring your own AI-IDE, pull this repo down, let the guardrails and the opinion do the work to generate beautiful landing pages in minutes.
 
 - Requires AI Provider API Key (Claude Preferred)
