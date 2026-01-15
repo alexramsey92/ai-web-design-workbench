@@ -19,6 +19,7 @@ class GeneratorWorkbench extends Component
     public ?string $error = null;
     public bool $showPreview = false;
     public bool $hasDraft = false;
+    public ?array $claudeService = null;
 
     public array $tokenOptions = [
         512  => 'Very Short (512 tokens)',
@@ -72,6 +73,13 @@ class GeneratorWorkbench extends Component
             ]);
 
             $this->showPreview = true;
+
+            // Capture Claude/Anthropic metadata if available
+            try {
+                $this->claudeService = $generator->getLastAnthropicInfo();
+            } catch (\Throwable $e) {
+                $this->claudeService = null;
+            }
             
             // Dispatch event for Monaco Editor
             $this->dispatch('html-generated', html: $this->generatedHtml);

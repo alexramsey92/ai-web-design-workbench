@@ -137,6 +137,14 @@ class HTMLGenerator
     }
 
     /**
+     * If an Anthropic call was made, return the last request/response info
+     */
+    public function getLastAnthropicInfo(): ?array
+    {
+        return $this->anthropicClient->getLastCallInfo();
+    }
+
+    /**
      * Format HTML output (prettify)
      */
     public function formatHTML(string $html): string

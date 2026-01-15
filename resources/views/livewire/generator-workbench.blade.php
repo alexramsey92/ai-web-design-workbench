@@ -186,6 +186,26 @@
                         </div>
 
                         <div id="monaco-editor" wire:ignore class="w-full h-full rounded-lg overflow-hidden border-0"></div>
+
+                        <!-- Claude Service info -->
+                        @if($claudeService)
+                            <div class="mt-3 p-3 bg-gray-50 border border-gray-200 rounded text-xs text-gray-700">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <div class="font-medium text-gray-800">Claude Service</div>
+                                        <div class="text-gray-500 mt-1">Request: <span class="text-gray-700">{{ Str::limit($claudeService['request']['prompt'] ?? ($claudeService['request']['payload']['messages'][0]['content'] ?? ''), 160) }}</span></div>
+                                        <div class="text-gray-500">Model: <span class="text-gray-700">{{ $claudeService['request']['payload']['model'] ?? 'n/a' }}</span> • Max tokens: <span class="text-gray-700">{{ $claudeService['request']['payload']['max_tokens'] ?? 'n/a' }}</span></div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-gray-500">Status: <span class="text-gray-700">{{ $claudeService['response']['status'] ?? 'n/a' }}</span></div>
+                                        <div class="text-gray-500">Duration: <span class="text-gray-700">{{ $claudeService['response']['duration_ms'] ?? '-' }} ms</span></div>
+                                    </div>
+                                </div>
+                                @if(!empty($claudeService['response']['body']))
+                                    <div class="mt-2 text-gray-600">Response snippet: <span class="text-gray-800">{{ Str::limit($claudeService['response']['body'], 240) }}</span></div>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

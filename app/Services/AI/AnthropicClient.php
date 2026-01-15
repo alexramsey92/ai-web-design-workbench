@@ -53,24 +53,50 @@ class AnthropicClient
                 // Build user prompt with the actual request
                 $userPrompt = $this->buildUserPrompt($prompt);
 
+                $payload = [
+                    'model' => config('mcp.anthropic.model'),
+                    'max_tokens' => (int) ($context['max_tokens'] ?? config('mcp.anthropic.max_tokens', 4096)),
+                    'temperature' => (float) config('mcp.anthropic.temperature', 0.7),
+                    'system' => $systemPrompt,
+                    'messages' => [
+                        [
+                            'role' => 'user',
+                            'content' => $userPrompt,
+                        ]
+                    ],
+                ];
+
+                // Record the request payload for debugging/inspection
+                $this->lastRequest = [
+                    'payload' => $payload,
+                    'headers' => [
+                        'x-api-key' => $this->apiKey,
+                        'anthropic-version' => '2023-06-01',
+                        'Content-Type' => 'application/json',
+                    ],
+                    'prompt' => $userPrompt,
+                    'context' => $context,
+                ];
+
+                $start = microtime(true);
+
                 $response = Http::timeout($this->timeout)
                     ->withHeaders([
                         'x-api-key' => $this->apiKey,
                         'anthropic-version' => '2023-06-01',
                         'Content-Type' => 'application/json',
                     ])
-                    ->post('https://api.anthropic.com/v1/messages', [
-                        'model' => config('mcp.anthropic.model'),
-                        'max_tokens' => (int) ($context['max_tokens'] ?? config('mcp.anthropic.max_tokens', 4096)),
-                        'temperature' => (float) config('mcp.anthropic.temperature', 0.7),
-                        'system' => $systemPrompt,
-                        'messages' => [
-                            [
-                                'role' => 'user',
-                                'content' => $userPrompt,
-                            ]
-                        ],
-                    ]);
+                    ->post('https://api.anthropic.com/v1/messages', $payload);
+
+                $duration = microtime(true) - $start;
+
+                // Record raw response info
+                $this->lastResponse = [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                    'json' => $response->successful() ? $response->json() : null,
+                    'duration_ms' => (int)($duration * 1000),
+                ];
 
                 if ($response->successful()) {
                     return $this->parseAnthropicResponse($response->json());
@@ -93,6 +119,14 @@ class AnthropicClient
                 }
             }
         }
+
+        // On final failure, record the last exception and make lastResponse include the error
+        $this->lastResponse = [
+            'status' => null,
+            'body' => $lastException ? $lastException->getMessage() : 'Unknown error',
+            'json' => null,
+            'duration_ms' => null,
+        ];
 
         throw new MCPException(
             "MCP generation failed after {$this->maxRetries} attempts: " . 
@@ -228,6 +262,9 @@ class AnthropicClient
     /**
      * Health check for Anthropic API
      */
+    protected ?array $lastRequest = null;
+    protected ?array $lastResponse = null;
+
     public function healthCheck(): bool
     {
         try {
@@ -252,5 +289,18 @@ class AnthropicClient
             Log::error('Anthropic API health check failed', ['error' => $e->getMessage()]);
             return false;
         }
+    }
+
+    /**
+     * Get information about the last Anthropic request/response
+     *
+     * @return array|null
+     */
+    public function getLastCallInfo(): ?array
+    {
+        return [
+            'request' => $this->lastRequest,
+            'response' => $this->lastResponse,
+        ];
     }
 }
