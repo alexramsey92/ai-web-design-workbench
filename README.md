@@ -2,9 +2,11 @@
 
 > **An IDE-first developer tool for rapidly generating production-ready HTML using AI, Tailwind CSS, and configurable styling levels.**
 
-Generate beautiful landing pages, blog posts, and product pages in minutes, not hours. Built for developers who want the power of AI with the precision of curated design systems.
+Bring your own AI-IDE, pull this repo down, let the guardrails and the opinion do the work to generate beautiful landing pages in minutes.
 
-If you bought an entire design system for $70k 2 years ago, congratulations it is now worth $0.
+- Requires AI Provider API Key (Claude Preferred)
+- Uses Tailwind CSS primarily
+- Built to work within Laravel Herd environment
 
 ## ✨ Features
 
