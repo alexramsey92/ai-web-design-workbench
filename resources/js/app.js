@@ -14,3 +14,6 @@ import 'highlight.js/styles/github-dark.css';
 hljs.registerLanguage('xml', xml);
 
 window.hljs = hljs;
+
+// Workbench module (handles placeholders, Monaco, drafts)
+import './workbench';
