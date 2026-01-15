@@ -1,0 +1,8 @@
+# GitHub Pages configuration
+title: AI Web Design Workbench
+description: A universal workbench for rapidly generating production-ready HTML using AI, Tailwind CSS, and semantic design patterns.
+theme: jekyll-theme-minimal
+show_downloads: true
+github:
+  repository_url: https://github.com/alexramsey92/ai-web-design-workbench
+  is_project_page: true
