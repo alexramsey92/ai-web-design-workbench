@@ -47,13 +47,11 @@ class AnthropicClient
             try {
                 $whitelistedClasses = $this->getWhitelistedClasses($context['style_level'] ?? 'full');
                 
-                $systemPrompt = "You are an expert HTML/Tailwind CSS developer. Generate clean, production-ready HTML using ONLY these Tailwind classes: " . implode(', ', $whitelistedClasses);
+                // Build comprehensive system prompt based on guide
+                $systemPrompt = $this->buildSystemPrompt($whitelistedClasses, $context);
                 
-                if (!empty($context['use_semantic'])) {
-                    $systemPrompt .= "\n\nYou can also use these semantic CSS classes: .hero, .gradient-hero, .btn-primary, .btn-secondary, .feature-card, .prose, .card, .container-custom";
-                }
-                
-                $userPrompt = $prompt . "\n\nGenerate complete, valid HTML with proper structure. Include <!DOCTYPE html>, <html>, <head> with meta tags and title, and <body>. Use Tailwind CDN: <script src=\"https://cdn.tailwindcss.com\"></script>";
+                // Build user prompt with the actual request
+                $userPrompt = $this->buildUserPrompt($prompt);
 
                 $response = Http::timeout($this->timeout)
                     ->withHeaders([
@@ -100,6 +98,62 @@ class AnthropicClient
             "MCP generation failed after {$this->maxRetries} attempts: " . 
             ($lastException ? $lastException->getMessage() : 'Unknown error')
         );
+    }
+
+    /**
+     * Build system prompt with semantic classes and rules
+     */
+    protected function buildSystemPrompt(array $whitelistedClasses, array $context): string
+    {
+        $semanticClasses = ['hero', 'section', 'feature-grid', 'feature-card', 'cta-button', 'btn-primary', 'btn-secondary', 'prose', 'card'];
+        
+        $prompt = "You are an expert web designer creating beautiful, modern landing pages.\n\n";
+        $prompt .= "RULES:\n";
+        $prompt .= "- Output clean, semantic HTML only\n";
+        $prompt .= "- Mix Tailwind utilities with semantic classes\n";
+        $prompt .= "- Use these semantic CSS classes: " . implode(', ', $semanticClasses) . "\n";
+        $prompt .= "- Available Tailwind classes: " . implode(', ', array_slice($whitelistedClasses, 0, 100)) . " (and more)\n";
+        $prompt .= "- Do NOT include <!DOCTYPE>, <html>, <head>, or <body> tags - only the content\n";
+        $prompt .= "- No inline JavaScript or CSS\n";
+        $prompt .= "- Use semantic HTML5 tags (section, article, header, nav, etc.)\n";
+        $prompt .= "- Include Font Awesome icons where appropriate (use <i class=\"fas fa-icon-name\"></i>)\n\n";
+        
+        $prompt .= "STRUCTURE:\n";
+        $prompt .= "1. Hero section with compelling headline, subheading, and CTA button\n";
+        $prompt .= "2. Feature grid showcasing 3-4 key benefits with icons\n";
+        $prompt .= "3. Optional secondary content section\n";
+        $prompt .= "4. Final CTA section\n\n";
+        
+        $prompt .= "EXAMPLE STRUCTURE:\n";
+        $prompt .= "<section class=\"hero\">\n";
+        $prompt .= "    <h1 class=\"text-5xl font-bold mb-4\">Your Headline</h1>\n";
+        $prompt .= "    <p class=\"text-xl mb-8\">Compelling subheading</p>\n";
+        $prompt .= "    <a href=\"#\" class=\"cta-button\">Get Started</a>\n";
+        $prompt .= "</section>\n\n";
+        $prompt .= "<section class=\"section\">\n";
+        $prompt .= "    <h2 class=\"text-3xl font-bold text-center mb-12\">Features</h2>\n";
+        $prompt .= "    <div class=\"feature-grid\">\n";
+        $prompt .= "        <div class=\"feature-card\">\n";
+        $prompt .= "            <i class=\"fas fa-bolt text-blue-600 text-4xl mb-4\"></i>\n";
+        $prompt .= "            <h3 class=\"text-xl font-semibold mb-2\">Feature Title</h3>\n";
+        $prompt .= "            <p class=\"text-gray-600\">Description</p>\n";
+        $prompt .= "        </div>\n";
+        $prompt .= "    </div>\n";
+        $prompt .= "</section>\n";
+        
+        return $prompt;
+    }
+
+    /**
+     * Build user prompt with the actual request
+     */
+    protected function buildUserPrompt(string $userRequest): string
+    {
+        return "Create a complete, professional landing page for: {$userRequest}\n\n" .
+               "Make it visually appealing, modern, and conversion-focused. " .
+               "Use appropriate colors, spacing, and typography. " .
+               "Include relevant icons and imagery suggestions. " .
+               "Remember: output ONLY the HTML content (no DOCTYPE, html, head, or body tags).";
     }
 
     /**

@@ -14,7 +14,7 @@
                         <button 
                             onclick="copyToClipboard()" 
                             class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
-                            Copy Code
+                            <i class="fas fa-copy mr-2"></i>Copy Code
                         </button>
                     @endif
                 </div>
@@ -23,10 +23,10 @@
 
         <!-- Main Content -->
         <div class="flex-1 flex overflow-hidden">
-            <!-- Left Panel - Controls & Code -->
+            <!-- Left Panel - Controls & Editor -->
             <div class="w-1/2 flex flex-col border-r border-gray-200 bg-white">
                 <!-- Input Form -->
-                <div class="p-6 border-b border-gray-200 space-y-4">
+                <div class="p-6 border-b border-gray-200 space-y-4 bg-white">
                     <div>
                         <div class="flex items-center justify-between mb-2">
                             <label for="prompt" class="block text-sm font-medium text-gray-700">
@@ -40,27 +40,16 @@
                                 Try Example
                             </button>
                         </div>
-                        <textarea 
-                            wire:model="prompt"
-                            id="prompt"
-                            rows="3"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            placeholder=""
-                            x-data="{ 
-                                placeholders: @js($examplePrompts),
-                                currentIndex: 0,
-                                updatePlaceholder() {
-                                    this.$el.placeholder = this.placeholders[this.currentIndex];
-                                    this.currentIndex = (this.currentIndex + 1) % this.placeholders.length;
-                                }
-                            }"
-                            x-init="
-                                updatePlaceholder();
-                                setInterval(() => updatePlaceholder(), 3000);
-                            "
-                            @if($isGenerating) disabled @endif
-                        ></textarea>
-                        @error('prompt') <span class="text-sm text-red-600">{{ $message }}</span> @enderror
+                        <div x-data="{ placeholders: @js($examplePrompts), currentIndex: 0 }" x-init="setInterval(() => { currentIndex = (currentIndex + 1) % placeholders.length; }, 3000)">
+                            <textarea 
+                                wire:model="prompt"
+                                id="prompt"
+                                rows="3"
+                                class="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
+                                x-bind:placeholder="placeholders[currentIndex]"
+                                @if($isGenerating) disabled @endif
+                            ></textarea>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -71,7 +60,7 @@
                             <select 
                                 wire:model="styleLevel"
                                 id="styleLevel"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 @if($isGenerating) disabled @endif
                             >
                                 @foreach($styleLevels as $level => $info)
@@ -87,54 +76,28 @@
                             <select 
                                 wire:model="pageType"
                                 id="pageType"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                class="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 @if($isGenerating) disabled @endif
                             >
-                                <option value="landing-page">Landing Page</option>
-                                <option value="blog-post">Blog Post</option>
-                                <option value="product-page">Product Page</option>
+                                <option value="landing">Landing Page</option>
+                                <option value="business">Business Page</option>
+                                <option value="portfolio">Portfolio</option>
+                                <option value="blog">Blog Page</option>
                             </select>
                         </div>
                     </div>
 
                     <button 
-                        wire:click="generate"
-                        @if($isGenerating) disabled @endif
-                        class="w-full px-6 py-3 text-white rounded-lg font-medium disabled:cursor-not-allowed transition relative overflow-hidden"
-                        :class="@js($isGenerating) ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'"
+                        wire:click="generate" 
+                        wire:loading.attr="disabled"
+                        class="w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:from-blue-700 hover:to-purple-700 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        @if($isGenerating)
-                            <div class="absolute inset-0 rainbow-progress"></div>
-                            <span class="relative z-10 flex items-center justify-center">
-                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Generating...
-                            </span>
-                        @else
-                            Generate HTML
-                        @endif
+                        <span wire:loading.remove wire:target="generate">Generate HTML</span>
+                        <span wire:loading wire:target="generate" class="inline-flex items-center gap-2">
+                            <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                            <span class="rainbow-text">Generating...</span>
+                        </span>
                     </button>
-
-                    <style>
-                        @keyframes rainbow {
-                            0% { background-position: 0% 50%; }
-                            50% { background-position: 100% 50%; }
-                            100% { background-position: 0% 50%; }
-                        }
-                        
-                        .rainbow-progress {
-                            background: linear-gradient(90deg, 
-                                #ff0000, #ff7f00, #ffff00, #00ff00, 
-                                #0000ff, #4b0082, #9400d3,
-                                #ff0000, #ff7f00, #ffff00
-                            );
-                            background-size: 200% 100%;
-                            animation: rainbow 2s linear infinite;
-                            opacity: 0.8;
-                        }
-                    </style>
 
                     @if($error)
                         <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -143,15 +106,19 @@
                     @endif
                 </div>
 
-                <!-- Generated Code -->
-                <div class="flex-1 overflow-auto">
+                <!-- Code Editor -->
+                <div class="flex-1 bg-gray-50 overflow-auto">
                     @if($generatedHtml)
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-3">
                                 <h3 class="text-sm font-semibold text-gray-700">Generated HTML</h3>
                                 <span class="text-xs text-gray-500">{{ strlen($generatedHtml) }} characters</span>
                             </div>
-                            <pre id="codeContent" class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-auto text-sm language-html"><code class="language-html">{{ $generatedHtml }}</code></pre>
+                            <textarea 
+                                wire:model.live="generatedHtml"
+                                class="w-full h-full min-h-[400px] bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm border-0 focus:ring-2 focus:ring-blue-500"
+                                style="font-family: 'Courier New', monospace;"
+                            ></textarea>
                         </div>
                     @else
                         <div class="flex items-center justify-center h-full text-gray-400">
@@ -175,9 +142,10 @@
                     @if($generatedHtml)
                         <div class="bg-white rounded-lg shadow-sm h-full overflow-auto">
                             <iframe 
-                                id="previewFrame"
+                                src="{{ route('content.show') }}?html={{ urlencode($generatedHtml) }}"
                                 class="w-full h-full border-0"
-                                sandbox="allow-same-origin"
+                                sandbox="allow-same-origin allow-scripts allow-forms"
+                                title="HTML Preview"
                             ></iframe>
                         </div>
                     @else
@@ -199,46 +167,21 @@
 
 @script
 <script>
-    $wire.on('html-generated', () => {
-        updatePreview();
-    });
-
-    function updatePreview() {
-        const iframe = document.getElementById('previewFrame');
-        const html = @js($generatedHtml);
-        
-        if (iframe && html) {
-            const doc = iframe.contentDocument || iframe.contentWindow.document;
-            doc.open();
-            doc.write(html);
-            doc.close();
-        }
-
-        // Highlight code
-        const codeBlock = document.querySelector('#codeContent code');
-        if (codeBlock && window.hljs) {
-            window.hljs.highlightElement(codeBlock);
-        }
-    }
-
     function copyToClipboard() {
-        const code = document.getElementById('codeContent').textContent;
+        const textarea = document.querySelector('textarea[wire\\:model\\.live="generatedHtml"]');
+        const code = textarea ? textarea.value : @js($generatedHtml);
         navigator.clipboard.writeText(code).then(() => {
-            const button = event.target;
-            const originalText = button.textContent;
-            button.textContent = 'Copied!';
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
             button.classList.add('bg-green-600');
+            button.classList.remove('bg-blue-600');
             setTimeout(() => {
-                button.textContent = originalText;
+                button.innerHTML = originalText;
                 button.classList.remove('bg-green-600');
+                button.classList.add('bg-blue-600');
             }, 2000);
         });
     }
-
-    // Update preview when component updates
-    Livewire.hook('morph.updated', () => {
-        updatePreview();
-    });
 </script>
 @endscript
-

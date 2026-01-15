@@ -1,14 +1,74 @@
 # AI Web Design Workbench
 
-> **An IDE-first developer tool for rapidly generating production-ready HTML using AI, Tailwind CSS, and configurable styling levels.**
+> **A universal workbench for rapidly generating production-ready HTML using AI, Tailwind CSS, and semantic design patterns.**
 
 ![Workbench Screenshot](docs/images/workbench-screenshot.png)
 
-Bring your own AI-IDE, pull this repo down, let the guardrails and the opinion do the work to generate beautiful landing pages in minutes.
+A flexible tool that meets you where you work. Generate beautiful landing pages through your IDE, a browser-based code editor, or command-line interface—your choice.
 
 - Requires AI Provider API Key (Claude Preferred)
-- Uses Tailwind CSS primarily
+- Uses Tailwind CSS + Semantic Classes
 - Built to work within Laravel Herd environment
+
+## 🎯 Three Ways to Work
+
+This workbench is designed to fit **your** workflow. Choose how you want to generate content:
+
+### 1. 🎨 **IDE Workflow** (Most Powerful)
+
+Work directly in your favorite IDE (VS Code, PHPStorm, Cursor, etc.) with AI coding assistants.
+
+**How it works:**
+- Open this project in your IDE
+- Use your AI assistant (GitHub Copilot, Cursor, etc.) to generate or modify files
+- Build HTML pages directly in the project
+- Copy finished files out to your destination project
+
+**Best for:**
+- Iterative design with AI assistance
+- Complex customizations
+- Learning and experimentation
+- Full control over every detail
+
+**Where we draw the line:** Once you move files out of this workbench, they're yours. This project provides the workspace, not the final hosting.
+
+### 2. 🌐 **Browser Workbench** (Quick & Visual)
+
+A split-screen code editor with live preview, accessible through your browser.
+
+**How it works:**
+- Launch the workbench: `http://ai-web-design-workbench.test/workbench`
+- Describe what you want to build
+- See generated HTML instantly with live preview
+- Edit code in the browser with syntax highlighting
+- Copy finished HTML when ready
+
+**Best for:**
+- Quick prototyping
+- Visual feedback while building
+- Sharing access with non-developers
+- No IDE setup required
+
+### 3. ⌨️ **CLI Commands** (Fast & Scriptable)
+
+Generate HTML directly from your terminal.
+
+**How it works:**
+```bash
+php artisan html:generate landing-page \
+  --company="Your Company" \
+  --headline="Your Headline" \
+  --style=full \
+  --output=output/page.html
+```
+
+**Best for:**
+- Batch generation
+- CI/CD integration
+- Quick one-off pages
+- Scripting and automation
+
+---
 
 ## ✨ Features
 
@@ -114,7 +174,12 @@ Bring your own AI-IDE, pull this repo down, let the guardrails and the opinion d
 
 ### Basic Usage
 
-Generate a landing page with full styling:
+**Option 1: Browser Workbench**
+```
+Navigate to: http://ai-web-design-workbench.test/workbench
+```
+
+**Option 2: CLI Generation**
 
 **Mac/Linux:**
 ```bash
@@ -134,7 +199,119 @@ php artisan html:generate landing-page `
   --output=output/landing-page.html
 ```
 
-**Windows (CMD):**
+**Option 3: IDE Workflow**
+```bash
+# Open project in your IDE
+code .  # VS Code
+# or
+cursor .  # Cursor
+# or
+---
+
+## 🎨 IDE Workflow Best Practices
+
+### Setting Up Your IDE
+
+1. **Open the project**
+   ```bash
+   cd ai-web-design-workbench
+   code .  # or your preferred IDE
+   ```
+
+2. **Enable AI Assistant**
+   - GitHub Copilot
+   - Cursor AI
+   - Codeium
+   - Or any AI coding assistant
+
+3. **Create output directory**
+   ```bash
+   mkdir -p resources/output
+   ```
+
+### Working with AI in Your IDE
+
+**Example Prompt for Your AI Assistant:**
+```
+Create a landing page HTML file for a boutique coffee shop in Portland. 
+Use semantic classes like .hero, .feature-grid, and .cta-button.
+Include Tailwind utilities for spacing and typography.
+Save to resources/output/coffee-shop.html
+```
+
+**Your AI will:**
+- Generate complete, semantic HTML
+- Use the project's design patterns
+- Follow best practices automatically
+- Create files you can immediately use
+
+### Moving Files Out
+
+Once you're happy with the generated HTML:
+
+```bash
+# Copy to your destination project
+cp resources/output/coffee-shop.html ~/Projects/my-website/pages/
+
+# Or open and copy manually
+```
+
+**Responsibility boundary:** Once files leave this workbench, you own them completely. This tool provides the workspace and generation power—what you do with the output is up to you.
+
+---
+
+## 📖storm .  # PHPStorm
+
+# Use your AI assistant to generate files in resources/output/
+# Then copy to your destination project
+```
+
+---
+
+## 🌐 Browser Workbench Guide
+
+The browser workbench provides a split-screen interface for rapid HTML generation.
+
+### Accessing the Workbench
+
+Navigate to: `http://ai-web-design-workbench.test/workbench`
+
+### Using the Interface
+
+1. **Describe Your Page**
+   - Enter a description (e.g., "A fitness coaching service specializing in weight loss")
+   - Click "Try Example" for inspiration
+   - Choose your style level (Full/Mid/Low)
+   - Select page type (Landing/Business/Portfolio/Blog)
+
+2. **Generate HTML**
+   - Click "Generate HTML" button
+   - Watch the AI create your page in real-time
+   - See live preview on the right side
+
+3. **Edit & Refine**
+   - Edit HTML directly in the code editor
+   - Changes reflect instantly in the preview
+   - Use semantic classes: `.hero`, `.feature-grid`, `.cta-button`
+
+4. **Export Your Work**
+   - Click "Copy Code" to copy the HTML
+   - Paste into your project
+   - Add to your own hosting
+
+### Workbench Features
+
+- **Live Preview**: See changes instantly in the right panel
+- **Cycling Placeholders**: Get prompt ideas automatically
+- **Syntax Highlighting**: Clean, readable code editor
+- **One-Click Copy**: Export your HTML with a single click
+- **Responsive Design**: Preview works on all screen sizes
+
+---
+
+## ⌨️ CLI Commands Guide
+
+### Generate Landing Pages*
 ```cmd
 php artisan html:generate landing-page --company="ClientBridge" --headline="Build Amazing Web Experiences" --style=full --output=output/landing-page.html
 ```
@@ -257,7 +434,76 @@ When MCP is disabled:
 - No external dependencies or API calls needed
 
 ## 🎯 Tailwind Whitelist
+ by Method
 
+### IDE Workflow Use Cases
+- Complex, multi-page projects
+- Heavy customization needed
+- Learning HTML/CSS patterns
+- Rapid iteration with AI feedback
+- Building component libraries
+
+### Browser Workbench Use Cases
+- Quick landing page prototypes
+- Client presentations
+- Non-developer access
+- Visual design iteration
+- Teaching/demonstration
+
+### CLI Use Cases
+- Automated page generation
+- Batch processing
+- CI/CD integration
+- Template generation
+- Scripted workflows
+
+---
+
+## 🚀 Quickstart by Method
+
+### Just Want to Try It? → Browser Workbench
+```
+1. Open: http://ai-web-design-workbench.test/workbench
+2. Click "Try Example"
+3. Click "Generate HTML"
+4. Copy the code
+```
+
+### Want Full Control? → IDE Workflow
+```bash
+1. code .
+2. Ask your AI: "Create a landing page for X"
+3. Edit and refine
+4. Copy files to your project
+```
+
+### Need Automation? → CLI Commands
+```bash
+php artisan html:generate landing-page \
+  --company="Your Company" \
+  --style=full \
+  --output=output/page.html \
+  --preview
+```
+
+---
+
+## 🎯 Choosing Your Method
+
+| Need | Best Method |
+|------|-------------|
+| Visual feedback | 🌐 Browser Workbench |
+| AI assistance | 🎨 IDE Workflow |
+| Quick prototypes | 🌐 Browser Workbench |
+| Full customization | 🎨 IDE Workflow |
+| Automation | ⌨️ CLI Commands |
+| Learning | 🎨 IDE Workflow |
+| Sharing | 🌐 Browser Workbench |
+| Batch generation | ⌨️ CLI Commands |
+
+---
+
+## 🎓 Use Cases
 The curated whitelist ensures:
 - ✅ Only battle-tested Tailwind classes
 - ✅ Consistent design language

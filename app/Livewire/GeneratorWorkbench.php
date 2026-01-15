@@ -27,9 +27,9 @@ class GeneratorWorkbench extends Component
     ];
 
     protected $rules = [
-        'prompt' => 'required|min:10|max:1000',
+        'prompt' => 'required|min:10|max:1000|string',
         'styleLevel' => 'required|in:full,mid,low',
-        'pageType' => 'required|in:landing-page,blog-post,product-page',
+        'pageType' => 'required|in:landing,business,portfolio,blog',
     ];
 
     public function generate(): void
@@ -39,6 +39,9 @@ class GeneratorWorkbench extends Component
         $this->isGenerating = true;
         $this->error = null;
         $this->generatedHtml = '';
+        
+        // Allow UI to update before blocking call
+        $this->dispatch('$refresh');
 
         try {
             $generator = app(HTMLGenerator::class);
@@ -50,6 +53,9 @@ class GeneratorWorkbench extends Component
             ]);
 
             $this->showPreview = true;
+            
+            // Dispatch event for Monaco Editor
+            $this->dispatch('html-generated', html: $this->generatedHtml);
             
         } catch (\Exception $e) {
             Log::error('HTML Generation failed', [

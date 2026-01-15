@@ -9,6 +9,22 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    
+    <style>
+        @keyframes rainbow {
+            0% { color: #ef4444; }
+            14% { color: #f97316; }
+            28% { color: #eab308; }
+            42% { color: #22c55e; }
+            57% { color: #3b82f6; }
+            71% { color: #8b5cf6; }
+            85% { color: #ec4899; }
+            100% { color: #ef4444; }
+        }
+        .rainbow-text {
+            animation: rainbow 2s linear infinite;
+        }
+    </style>
 </head>
 <body class="bg-gray-50 antialiased">
     <nav class="bg-white border-b border-gray-200">
