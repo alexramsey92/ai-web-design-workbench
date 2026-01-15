@@ -13,12 +13,12 @@ Route::get('/workbench', function () {
 Route::get('/content', function () {
     // Get HTML from session instead of query param to avoid 414 URI Too Long errors
     $html = session('preview_html', request()->query('html', ''));
-    
+
     // Validate HTML is from authenticated session
-    if (!session()->has('_token')) {
+    if (! session()->has('_token')) {
         abort(403, 'Unauthorized');
     }
-    
+
     // Wrap HTML with required head and semantic CSS
     $fullHtml = '<!DOCTYPE html>
 <html lang="en">
@@ -77,8 +77,9 @@ Route::get('/content', function () {
             transform: translateY(-2px);
         }
         .btn-secondary {
-            background: #6b7280;
-            color: white;
+            background: rgba(255, 255, 255, 0.85);
+            color: currentColor;
+            border: 2px solid currentColor;
             padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
             font-weight: 500;
@@ -87,7 +88,23 @@ Route::get('/content', function () {
             transition: all 0.3s;
         }
         .btn-secondary:hover {
-            background: #4b5563;
+            background: currentColor;
+            color: white;
+        }
+        .btn-outline {
+            background: transparent;
+            color: currentColor;
+            border: 2px solid currentColor;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .btn-outline:hover {
+            background: currentColor;
+            color: white;
         }
         .feature-grid {
             display: grid;
@@ -133,10 +150,10 @@ Route::get('/content', function () {
     </style>
 </head>
 <body>
-' . $html . '
+'.$html.'
 </body>
 </html>';
-    
+
     // Add security headers to prevent XSS in preview
     return response($fullHtml)
         ->header('Content-Type', 'text/html; charset=utf-8')
