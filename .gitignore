@@ -22,3 +22,10 @@ _ide_helper.php
 _ide_helper_models.php
 .DS_Store
 Thumbs.db
+
+# Laravel Boost generated files
+.mcp.json
+CLAUDE.md
+AGENTS.md
+junie/
+boost.json
