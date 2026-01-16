@@ -139,7 +139,7 @@ php artisan html:generate landing-page \
    npm run build
    ```
 
-5. **(Optional) Enable AI Generation with Claude**
+5. **Enable AI Generation with Claude**
    
    a. **Get your Claude API key:**
       - Visit https://platform.claude.com/settings/keys
@@ -171,8 +171,6 @@ php artisan html:generate landing-page \
       - Verify your API key is correct
       - Check you have API credits/quota available
       - Ensure your internet connection is working
-   
-   **Without AI:** The workbench works perfectly using built-in semantic templates. AI is completely optional!
 
 ### Basic Usage
 
@@ -224,7 +222,7 @@ cursor .  # Cursor
    - GitHub Copilot
    - Cursor AI
    - Codeium
-   - Or any AI coding assistant
+   - Or any AI coding assistant including MCP Servers locally
 
 3. **Create output directory**
    ```bash
@@ -254,21 +252,9 @@ Once you're happy with the generated HTML:
 ```bash
 # Copy to your destination project
 cp resources/output/coffee-shop.html ~/Projects/my-website/pages/
-
-# Or open and copy manually
 ```
 
 **Responsibility boundary:** Once files leave this workbench, you own them completely. This tool provides the workspace and generation power—what you do with the output is up to you.
-
----
-
-## 📖storm .  # PHPStorm
-
-# Use your AI assistant to generate files in resources/output/
-# Then copy to your destination project
-```
-
----
 
 ## 🌐 Browser Workbench Guide
 
@@ -300,14 +286,6 @@ Navigate to: `http://ai-web-design-workbench.test/workbench`
    - Click "Copy Code" to copy the HTML
    - Paste into your project
    - Add to your own hosting
-
-### Workbench Features
-
-- **Live Preview**: See changes instantly in the right panel
-- **Cycling Placeholders**: Get prompt ideas automatically
-- **Syntax Highlighting**: Clean, readable code editor
-- **One-Click Copy**: Export your HTML with a single click
-- **Responsive Design**: Preview works on all screen sizes
 
 ---
 
