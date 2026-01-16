@@ -55,12 +55,16 @@ class GeneratorWorkbench extends Component
         'styleLevel' => 'required|in:full,mid,low',
         'pageType' => 'required|in:landing,business,portfolio,blog',
         'maxTokens' => 'required|integer|in:512,1024,2048,4096,8192',
-        'byokApiKey' => 'nullable|string|min:20|max:200',
+        'byokApiKey' => 'required_if:byokEnabled,true|string|min:20|max:200',
     ];
+
+    public bool $byokEnabled = false;
 
     public function mount(): void
     {
-        if (config('mcp.byok.session_enabled')) {
+        $this->byokEnabled = config('mcp.byok.session_enabled', false);
+
+        if ($this->byokEnabled) {
             $this->byokApiKey = (string) session('byok.anthropic_api_key', '');
         }
     }
@@ -70,7 +74,20 @@ class GeneratorWorkbench extends Component
         // Increase PHP execution time for AI generation
         set_time_limit(120);
 
-        $this->validate();
+        // Validate API key requirement first
+        if ($this->byokEnabled) {
+            $this->validate([
+                'byokApiKey' => 'required|string|min:20|max:200',
+            ]);
+        } else {
+            // Validate other fields
+            $this->validate([
+                'prompt' => 'required|min:10|max:1000|string',
+                'styleLevel' => 'required|in:full,mid,low',
+                'pageType' => 'required|in:landing,business,portfolio,blog',
+                'maxTokens' => 'required|integer|in:512,1024,2048,4096,8192',
+            ]);
+        }
 
         if (config('mcp.byok.session_enabled')) {
             if (trim($this->byokApiKey) !== '') {

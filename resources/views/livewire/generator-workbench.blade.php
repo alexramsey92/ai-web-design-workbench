@@ -115,9 +115,12 @@
 
                             @if($byokSessionEnabled)
                                 <div class="border-t border-gray-200 pt-3">
-                                    <label for="byokApiKey" class="block font-medium text-gray-800 mb-1">Bring your own key (session-only)</label>
+                                    <label for="byokApiKey" class="block font-medium text-gray-800 mb-1">
+                                        Bring your own key (session-only)
+                                        <span class="text-red-600 font-bold">*</span>
+                                    </label>
                                     <p class="text-gray-600 mb-2">
-                                        Temporarily stored in your session and automatically removed when your session expires. Never permanently saved.
+                                        Required for generation. Temporarily stored in your session and automatically removed when your session expires. Never permanently saved.
                                     </p>
                                     <input
                                         id="byokApiKey"
@@ -125,9 +128,13 @@
                                         autocomplete="off"
                                         wire:model.blur="byokApiKey"
                                         placeholder="Paste your Claude API key sk-ant-... here"
+                                        required
                                          @if($isGenerating) disabled @endif
                                         class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
                                     />
+                                    @error('byokApiKey')
+                                        <p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             @endif
                         </div>
