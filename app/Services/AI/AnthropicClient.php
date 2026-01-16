@@ -315,8 +315,15 @@ class AnthropicClient
 
     protected function resolveApiKey(array $context): ?string
     {
-        $apiKey = $context['api_key'] ?? (isset($context['options']['api_key']) ? $context['options']['api_key'] : $this->apiKey);
+        $apiKey = $context['api_key'] ?? null;
 
+        if ($apiKey === null && isset($context['options']['api_key'])) {
+            $apiKey = $context['options']['api_key'];
+        }
+
+        if ($apiKey === null) {
+            $apiKey = $this->apiKey;
+        }
         return is_string($apiKey) && trim($apiKey) !== '' ? trim($apiKey) : null;
     }
 
