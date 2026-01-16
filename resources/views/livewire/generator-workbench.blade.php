@@ -96,6 +96,7 @@
 
                     @php
                         $hasClaudeKey = !empty(config('mcp.anthropic.api_key'));
+                        $byokSessionEnabled = (bool) config('mcp.byok.session_enabled');
                     @endphp
                     <details class="rounded-lg border border-gray-200 bg-gray-50/60 px-3 py-2 text-xs text-gray-700" @if(!$hasClaudeKey) open @endif>
                         <summary class="cursor-pointer font-medium text-gray-800">Claude API key</summary>
@@ -108,6 +109,25 @@
                             </a>
                         </div>
                     </details>
+
+                    @if($byokSessionEnabled)
+                        <div class="rounded-lg border border-blue-100 bg-blue-50/70 px-3 py-2 text-xs text-blue-900">
+                            <div class="flex items-center justify-between">
+                                <label for="byokApiKey" class="font-medium">Bring your own Claude key (session-only)</label>
+                            </div>
+                            <p class="mt-1 text-blue-800/90">
+                                Stored in your server session for this browser only. It is never saved to the database.
+                            </p>
+                            <input
+                                id="byokApiKey"
+                                type="password"
+                                autocomplete="off"
+                                wire:model.defer="byokApiKey"
+                                placeholder="Paste your Claude API key"
+                                class="mt-2 w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-xs text-blue-900 placeholder-blue-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+                            />
+                        </div>
+                    @endif
 
                     <div x-data="{ 
                         elapsedTime: 0,
