@@ -44,6 +44,11 @@ class AnthropicClient
             throw new MCPException('MCP is not enabled or configured. Check your .env settings.');
         }
 
+        $apiKey = $this->resolveApiKey($context);
+        if (! $apiKey) {
+            throw new MCPException('Anthropic API key is not configured.');
+        }
+
         $attempt = 0;
         $lastException = null;
 
@@ -74,19 +79,19 @@ class AnthropicClient
                 $this->lastRequest = [
                     'payload' => $payload,
                     'headers' => [
-                        'x-api-key' => $this->apiKey,
+                        'x-api-key' => 'REDACTED',
                         'anthropic-version' => '2023-06-01',
                         'Content-Type' => 'application/json',
                     ],
                     'prompt' => $userPrompt,
-                    'context' => $context,
+                    'context' => $this->sanitizeContext($context),
                 ];
 
                 $start = microtime(true);
 
                 $response = Http::timeout($this->timeout)
                     ->withHeaders([
-                        'x-api-key' => $this->apiKey,
+                        'x-api-key' => $apiKey,
                         'anthropic-version' => '2023-06-01',
                         'Content-Type' => 'application/json',
                     ])
@@ -306,5 +311,23 @@ class AnthropicClient
             'request' => $this->lastRequest,
             'response' => $this->lastResponse,
         ];
+    }
+
+    protected function resolveApiKey(array $context): ?string
+    {
+        $apiKey = $context['api_key'] ?? (isset($context['options']['api_key']) ? $context['options']['api_key'] : $this->apiKey);
+
+        return is_string($apiKey) && trim($apiKey) !== '' ? trim($apiKey) : null;
+    }
+
+    protected function sanitizeContext(array $context): array
+    {
+        unset($context['api_key']);
+
+        if (isset($context['options']['api_key'])) {
+            unset($context['options']['api_key']);
+        }
+
+        return $context;
     }
 }
