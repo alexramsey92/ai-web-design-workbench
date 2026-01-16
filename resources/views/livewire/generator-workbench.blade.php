@@ -116,7 +116,7 @@
                                 <label for="byokApiKey" class="font-medium">Bring your own Claude key (session-only)</label>
                             </div>
                             <p class="mt-1 text-blue-800/90">
-                                Stored in your server session for this browser only. It is never saved to the database.
+                                Stored temporarily in your session for this browser only and automatically removed when your session expires. Never permanently stored or logged.
                             </p>
                             <input
                                 id="byokApiKey"
