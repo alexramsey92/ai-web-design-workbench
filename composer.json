@@ -30,6 +30,13 @@
         }
     },
     "scripts": {
+        "pre-autoload-dump": [
+            "@php -r \"file_exists('bootstrap/cache') || mkdir('bootstrap/cache', 0755, true);\"",
+            "@php -r \"file_exists('storage/framework/cache') || mkdir('storage/framework/cache', 0755, true);\"",
+            "@php -r \"file_exists('storage/framework/views') || mkdir('storage/framework/views', 0755, true);\"",
+            "@php -r \"file_exists('storage/framework/sessions') || mkdir('storage/framework/sessions', 0755, true);\"",
+            "@php -r \"file_exists('storage/logs') || mkdir('storage/logs', 0755, true);\""
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
