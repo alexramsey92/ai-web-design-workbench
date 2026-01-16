@@ -32,7 +32,6 @@ class GeneratorWorkbench extends Component
     public string $byokApiKey = '';
 
     public array $tokenOptions = [
-        128 => 'Test (128 tokens)',
         512 => 'Very Short (512 tokens) - Hero',
         1024 => 'Short (1K tokens) - Hero + Content',
         2048 => 'Medium (2K tokens) - Hero + Content + Features',
