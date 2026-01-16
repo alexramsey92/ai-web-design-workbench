@@ -31,6 +31,10 @@ return [
     ],
     
     'logging_enabled' => env('AI_LOGGING_ENABLED', true),
+
+    'byok' => [
+        'session_enabled' => env('AI_BYOK_SESSION_ENABLED', false),
+    ],
     
     /*
     |--------------------------------------------------------------------------
