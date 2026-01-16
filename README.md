@@ -206,7 +206,8 @@ code .  # VS Code
 # or
 cursor .  # Cursor
 # or
----
+phpstorm .  # PHPStorm
+```
 
 ## 🎨 IDE Workflow Best Practices
 
