@@ -100,34 +100,38 @@
                     @endphp
                     <details class="rounded-lg border border-gray-200 bg-gray-50/60 px-3 py-2 text-xs text-gray-700" @if(!$hasClaudeKey) open @endif>
                         <summary class="cursor-pointer font-medium text-gray-800">Claude API key</summary>
-                        <div class="mt-2 space-y-1 text-gray-600">
-                            <p>To enable AI generation, add your Claude API key to your .env file.</p>
-                            <p>Use <span class="font-semibold">ANTHROPIC_API_KEY=...</span> and refresh.</p>
+                        <div class="mt-2 space-y-3">
+                            @if(!$byokSessionEnabled)
+                                <div class="space-y-1 text-gray-600">
+                                    <p>To enable AI generation, add your Claude API key to your .env file.</p>
+                                    <p>Use <span class="font-semibold">ANTHROPIC_API_KEY=...</span> and refresh.</p>
+                                </div>
+                            @endif
+
                             <a href="https://platform.claude.com/settings/keys" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700">
                                 Get your Claude API key
                                 <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
                             </a>
+
+                            @if($byokSessionEnabled)
+                                <div class="border-t border-gray-200 pt-3">
+                                    <label for="byokApiKey" class="block font-medium text-gray-800 mb-1">Bring your own key (session-only)</label>
+                                    <p class="text-gray-600 mb-2">
+                                        Temporarily stored in your session and automatically removed when your session expires. Never permanently saved.
+                                    </p>
+                                    <input
+                                        id="byokApiKey"
+                                        type="password"
+                                        autocomplete="off"
+                                        wire:model.blur="byokApiKey"
+                                        placeholder="Paste your Claude API key sk-ant-... here"
+                                         @if($isGenerating) disabled @endif
+                                        class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+                                    />
+                                </div>
+                            @endif
                         </div>
                     </details>
-
-                    @if($byokSessionEnabled)
-                        <div class="rounded-lg border border-blue-100 bg-blue-50/70 px-3 py-2 text-xs text-blue-900">
-                            <div class="flex items-center justify-between">
-                                <label for="byokApiKey" class="font-medium">Bring your own Claude key (session-only)</label>
-                            </div>
-                            <p class="mt-1 text-blue-800/90">
-                                Stored temporarily in your session for this browser only and automatically removed when your session expires. Never permanently stored or logged.
-                            </p>
-                            <input
-                                id="byokApiKey"
-                                type="password"
-                                autocomplete="off"
-                                wire:model.blur="byokApiKey"
-                                placeholder="Paste your Claude API key"
-                                class="mt-2 w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-xs text-blue-900 placeholder-blue-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
-                            />
-                        </div>
-                    @endif
 
                     <div x-data="{ 
                         elapsedTime: 0,
