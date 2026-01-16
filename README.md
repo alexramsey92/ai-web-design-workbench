@@ -1,6 +1,6 @@
 # AI Web Design Workbench
 
-[View the demo on GitHub Pages](https://alexramsey92.github.io/ai-web-design-workbench/)
+[View the demo on GitHub Pages](https://alexramsey92.github.io/ai-web-design-workbench/) | **[Try It Now – Bring Your Own API Key](https://ai-web-design-workbench.laravel.cloud/workbench)**
 
 > **A universal workbench for rapidly generating production-ready HTML using AI, Tailwind CSS, and semantic design patterns.**
 
