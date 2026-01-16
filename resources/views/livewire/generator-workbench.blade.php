@@ -261,10 +261,21 @@
                 <div class="p-4 bg-white border-b border-gray-200">
                     <h3 class="text-sm font-semibold text-gray-700">Live Preview</h3>
                 </div>
-                <div class="flex-1 overflow-auto p-4">
+                <div class="flex-1 overflow-auto p-4" 
+                     x-data="{ 
+                        previewKey: $wire.entangle('generatedHtml'),
+                        refreshPreview() {
+                            const iframe = $el.querySelector('iframe');
+                            if (iframe) {
+                                iframe.src = iframe.src.split('?')[0] + '?t=' + Date.now();
+                            }
+                        }
+                     }"
+                     @preview-refresh.window="refreshPreview()">
                     <div class="bg-white rounded-lg shadow-sm h-full overflow-auto">
                         @if($generatedHtml)
                             <iframe 
+                                wire:key="preview-{{ md5($generatedHtml) }}"
                                 src="{{ $this->getPreviewUrl() }}"
                                 class="w-full h-full border-0"
                                 sandbox="allow-same-origin allow-scripts allow-forms"
