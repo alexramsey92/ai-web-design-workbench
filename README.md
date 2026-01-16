@@ -90,7 +90,7 @@ php artisan html:generate landing-page \
 - Composer
 - Node.js & npm (for Tailwind CSS)
 - **Recommended:** [Laravel Herd](https://herd.laravel.com) (free, batteries-included PHP development environment)
-- (Optional) Anthropic API key for AI-powered generation
+- (Optional) Claude API key for AI-powered generation
 
 ### Recommended Setup with Laravel Herd
 
@@ -139,10 +139,10 @@ php artisan html:generate landing-page \
    npm run build
    ```
 
-5. **(Optional) Enable AI Generation with Anthropic Claude**
+5. **(Optional) Enable AI Generation with Claude**
    
-   a. **Get your Anthropic API key:**
-      - Visit https://console.anthropic.com/
+   a. **Get your Claude API key:**
+      - Visit https://platform.claude.com/settings/keys
       - Sign up or log in to your account
       - Navigate to API Keys section
       - Create a new API key
@@ -164,10 +164,10 @@ php artisan html:generate landing-page \
       **Expected Output:**
       ```
       ✓ AI Content Generation is ENABLED
-      ✓ Anthropic API is responding
+      ✓ Claude API is responding
       ```
       
-      If you see "✗ Anthropic API is not responding":
+      If you see "✗ Claude API is not responding":
       - Verify your API key is correct
       - Check you have API credits/quota available
       - Ensure your internet connection is working
@@ -687,7 +687,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 Built quickly 🏎️ with [Laravel](https://laravel.com) and [Laravel Boost](https://github.com/laravel/boost)
 
 - Styled with [Tailwind CSS](https://tailwindcss.com)
-- Powered by [Anthropic Claude](https://www.anthropic.com)
+- Powered by [Claude](https://www.anthropic.com)
 - Made with ❤️ by [Alexander Ramsey](https://alexanderramsey.com)
 
 ## 📬 Support

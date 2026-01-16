@@ -6,13 +6,13 @@
                 <span class="font-semibold text-sm">AI Web Design Workbench</span>
             </div>
             <div class="flex items-center gap-2">
-                <a href="https://github.com/alexramsey92/ai-web-design-workbench" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs text-gray-600 hover:text-gray-800" title="View on GitHub">
+                <a href="{{ route('home') }}" class="text-xs text-gray-600 hover:text-gray-800">Welcome</a>
+                <a href="https://alexramsey92.github.io/ai-web-design-workbench/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs text-gray-600 hover:text-gray-800" title="View Docs">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.757-1.333-1.757-1.089-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.418-1.305.762-1.605-2.665-.305-5.466-1.332-5.466-5.931 0-1.31.468-2.381 1.235-3.221-.123-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.3 1.23.957-.266 1.98-.399 3-.405 1.02.006 2.043.139 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.655 1.653.243 2.874.12 3.176.77.84 1.23 1.911 1.23 3.221 0 4.61-2.807 5.624-5.48 5.921.43.369.823 1.096.823 2.214 0 1.598-.015 2.887-.015 3.281 0 .319.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
                     </svg>
-                    <span class="sr-only">GitHub</span>
+                    <span>Docs</span>
                 </a>
-                <button wire:click="clear" class="text-xs text-gray-600 hover:text-gray-800">Clear</button>
             </div>
         </div>
         <!-- Main Content -->
@@ -93,6 +93,21 @@
                             </select>
                         </div>
                     </div>
+
+                    @php
+                        $hasClaudeKey = !empty(config('mcp.anthropic.api_key'));
+                    @endphp
+                    <details class="rounded-lg border border-gray-200 bg-gray-50/60 px-3 py-2 text-xs text-gray-700" @if(!$hasClaudeKey) open @endif>
+                        <summary class="cursor-pointer font-medium text-gray-800">Claude API key</summary>
+                        <div class="mt-2 space-y-1 text-gray-600">
+                            <p>To enable AI generation, add your Claude API key to your .env file.</p>
+                            <p>Use <span class="font-semibold">ANTHROPIC_API_KEY=...</span> and refresh.</p>
+                            <a href="https://platform.claude.com/settings/keys" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700">
+                                Get your Claude API key
+                                <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    </details>
 
                     <div x-data="{ 
                         elapsedTime: 0,
