@@ -23,7 +23,7 @@
                 <div class="p-6 border-b border-gray-200 space-y-4 bg-white">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label for="prompt" class="block text-sm font-medium text-gray-700">
+                            <label for="prompt" class="block text-2xl font-semibold text-gray-700">
                                 Describe what you want to build
                             </label>
                             <button 
@@ -38,7 +38,7 @@
                             wire:model="prompt"
                             id="prompt"
                             rows="3"
-                            class="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
+                            class="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 placeholder:text-2xl"
                             @if($isGenerating) disabled @endif
                         ></textarea>
                     </div>
