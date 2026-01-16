@@ -11,6 +11,7 @@ export default (function () {
     let isUpdatingFromEditor = false;
     let isInitializingMonaco = false;
     let monacoInitPromise = null;
+    let previewRefreshTimer = null;
 
     // Helper: returns true if the editor's DOM node is still attached to document
     function isEditorMounted() {
@@ -19,6 +20,19 @@ export default (function () {
         } catch (e) {
             return false;
         }
+    }
+
+    // Debounced preview refresh - updates preview after user stops typing
+    function schedulePreviewRefresh() {
+        if (previewRefreshTimer) {
+            clearTimeout(previewRefreshTimer);
+        }
+        // Wait 1.5 seconds after last change before refreshing preview
+        previewRefreshTimer = setTimeout(() => {
+            console.log('workbench: refreshing preview after editor change');
+            window.dispatchEvent(new CustomEvent('preview-refresh'));
+            previewRefreshTimer = null;
+        }, 1500);
     }
 
     // Placeholder manager
@@ -173,6 +187,11 @@ export default (function () {
                 try { initMonaco(html); } catch (e) { console.warn('Failed to initMonaco from html-generated', e); }
             }
             updateDraft(html);
+            // Refresh preview immediately after generation
+            setTimeout(() => {
+                console.log('workbench: refreshing preview after generation');
+                window.dispatchEvent(new CustomEvent('preview-refresh'));
+            }, 100);
         } catch (e) {
             console.warn('Failed handling html-generated', e);
         }
@@ -494,6 +513,8 @@ export default (function () {
                                         if (comp) comp.set('generatedHtml', value);
                                     }
                                     updateDraft(value);
+                                    // Schedule preview refresh after user stops typing
+                                    schedulePreviewRefresh();
                                     setTimeout(() => { isUpdatingFromEditor = false; }, 50);
                                 }
                             });
