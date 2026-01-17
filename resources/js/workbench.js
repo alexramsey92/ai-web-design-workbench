@@ -469,8 +469,8 @@ export default (function () {
                                 scrollBeyondLastLine: false,
                                 wordWrap: 'on',
                                 tabSize: 2,
-                                formatOnPaste: true,
-                                formatOnType: true,
+                                readOnly: true,
+                                domReadOnly: true,
                             });
 
                             // Force an initial layout and respond to future resizes
