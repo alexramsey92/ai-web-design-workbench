@@ -125,6 +125,9 @@ class GeneratorWorkbench extends Component
             $this->generatedHtml = $generator->generate($this->pageType, $options);
 
             $this->showPreview = true;
+            
+            // Update session immediately for preview
+            session(['preview_html' => $this->generatedHtml]);
 
             // Capture Claude/Anthropic metadata if available
             try {
@@ -181,6 +184,13 @@ class GeneratorWorkbench extends Component
 
         // Return a safe, empty payload so Livewire requests don't 500
         return ['ok' => true];
+    }
+
+    public function refreshPreview(): void
+    {
+        // Update session and dispatch event to force iframe reload
+        session(['preview_html' => $this->generatedHtml]);
+        $this->dispatch('force-preview-refresh');
     }
 
     public function getPreviewUrl(): string

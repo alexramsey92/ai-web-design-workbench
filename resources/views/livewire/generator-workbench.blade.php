@@ -258,8 +258,17 @@
 
             <!-- Right Panel - Preview -->
             <div class="w-1/2 bg-gray-100 flex flex-col">
-                <div class="p-4 bg-white border-b border-gray-200">
+                <div class="p-4 bg-white border-b border-gray-200 flex items-center justify-between">
                     <h3 class="text-sm font-semibold text-gray-700">Live Preview</h3>
+                    @if($generatedHtml)
+                        <button 
+                            wire:click="refreshPreview"
+                            class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition inline-flex items-center gap-2"
+                            title="Refresh preview">
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh
+                        </button>
+                    @endif
                 </div>
                 <div class="flex-1 overflow-auto p-4" 
                      x-data="{ 
@@ -271,7 +280,8 @@
                             }
                         }
                      }"
-                     @preview-refresh.window="refreshPreview()">
+                     @preview-refresh.window="refreshPreview()"
+                     @force-preview-refresh.window="refreshPreview()">
                     <div class="bg-white rounded-lg shadow-sm h-full overflow-auto">
                         @if($generatedHtml)
                             <iframe 
