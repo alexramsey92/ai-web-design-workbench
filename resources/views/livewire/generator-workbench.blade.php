@@ -1,4 +1,4 @@
-<div class="fixed inset-0 bg-gray-50 overflow-hidden" data-workbench data-placeholders='@json($examplePrompts)' data-generated='@json($generatedHtml)' data-wire-id='{{ $__env->getLastLoop()?->parent ?? null }}'>
+<div class="fixed inset-0 bg-gray-50 overflow-hidden" data-workbench data-placeholders='@json($examplePrompts)' data-generated='@json($generatedHtml)' wire:id="{{ $this->getId() }}">
     <div class="h-full flex flex-col">
         <!-- Slim header -->
         <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 bg-white/80 text-xs">
