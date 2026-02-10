@@ -179,3 +179,122 @@
     text-wrap: balance;
   }
 }
+
+/* Feature Carousel Animations */
+.feature-carousel-container {
+  @apply relative flex justify-center items-center min-h-[200px] overflow-visible;
+}
+
+.feature-carousel {
+  @apply relative flex justify-center items-center gap-4 flex-wrap;
+  perspective: 1000px;
+}
+
+.feature-badge {
+  @apply relative flex flex-col items-center justify-center
+         w-32 h-32 md:w-40 md:h-40
+         rounded-2xl shadow-lg
+         transition-all duration-700 ease-in-out
+         cursor-pointer
+         bg-white text-gray-700
+         border-2 border-gray-200
+         opacity-60 scale-90;
+  transform-style: preserve-3d;
+}
+
+.feature-badge:hover {
+  @apply opacity-80 scale-95;
+}
+
+.feature-badge.active {
+  @apply opacity-100 scale-110 shadow-2xl z-10
+         bg-gradient-to-br from-red-500 to-red-600
+         text-white border-0;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.feature-badge[data-feature="lead-gen"].active {
+  @apply bg-gradient-to-br from-red-500 to-red-600;
+}
+
+.feature-badge[data-feature="crm"].active {
+  @apply bg-gradient-to-br from-blue-500 to-blue-600;
+}
+
+.feature-badge[data-feature="cms"].active {
+  @apply bg-gradient-to-br from-purple-500 to-purple-600;
+}
+
+.feature-badge[data-feature="pay"].active {
+  @apply bg-gradient-to-br from-green-500 to-green-600;
+}
+
+.feature-badge[data-feature="book"].active {
+  @apply bg-gradient-to-br from-orange-500 to-orange-600;
+}
+
+.feature-icon {
+  @apply text-4xl md:text-5xl mb-2;
+}
+
+.feature-label {
+  @apply text-sm md:text-base font-bold uppercase tracking-wider mb-1;
+}
+
+.feature-description {
+  @apply text-xs md:text-sm opacity-90;
+}
+
+.feature-badge.active .feature-icon {
+  animation: bounce-icon 0.6s ease-in-out;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 10px 40px -10px rgba(239, 68, 68, 0.6),
+                0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 15px 50px -10px rgba(239, 68, 68, 0.8),
+                0 0 0 10px rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes bounce-icon {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.1);
+  }
+}
+
+.feature-badge.entering {
+  animation: slide-in 0.7s ease-out forwards;
+}
+
+.feature-badge.exiting {
+  animation: slide-out 0.7s ease-in forwards;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateY(20px) scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-out {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px) scale(0.8);
+    opacity: 0.6;
+  }
+}

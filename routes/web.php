@@ -10,6 +10,10 @@ Route::get('/workbench', function () {
     return view('workbench');
 })->name('workbench');
 
+Route::get('/smbgen', function () {
+    return view('smbgen');
+})->name('smbgen');
+
 Route::get('/content', function () {
     // Get HTML from session instead of query param to avoid 414 URI Too Long errors
     $html = session('preview_html', request()->query('html', ''));
