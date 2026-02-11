@@ -4,6 +4,7 @@ namespace App\Services\Generation;
 
 use App\Services\AI\AnthropicClient;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class HTMLGenerator
@@ -80,11 +81,11 @@ class HTMLGenerator
         $useSemanticClasses = config('mcp.use_semantic_classes', true);
 
         $suffix = $useSemanticClasses ? 'SemanticGenerator' : 'Generator';
-        $className = 'App\\Services\\Templates\\'.studly_case($type).$suffix;
+        $className = 'App\\Services\\Templates\\'.Str::studly($type).$suffix;
 
         // Fallback to non-semantic if semantic doesn't exist
         if (! class_exists($className)) {
-            $className = 'App\\Services\\Templates\\'.studly_case($type).'Generator';
+            $className = 'App\\Services\\Templates\\'.Str::studly($type).'Generator';
         }
 
         if (! class_exists($className)) {
