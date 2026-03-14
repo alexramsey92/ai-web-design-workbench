@@ -80,11 +80,11 @@ class HTMLGenerator
         $useSemanticClasses = config('mcp.use_semantic_classes', true);
 
         $suffix = $useSemanticClasses ? 'SemanticGenerator' : 'Generator';
-        $className = 'App\\Services\\Templates\\'.studly_case($type).$suffix;
+        $className = 'App\\Services\\Templates\\'.\Illuminate\Support\Str::studly($type).$suffix;
 
         // Fallback to non-semantic if semantic doesn't exist
         if (! class_exists($className)) {
-            $className = 'App\\Services\\Templates\\'.studly_case($type).'Generator';
+            $className = 'App\\Services\\Templates\\'.\Illuminate\Support\Str::studly($type).'Generator';
         }
 
         if (! class_exists($className)) {
